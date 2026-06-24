@@ -51,7 +51,8 @@ public class ConcurrencyLimiterChallenge {
 
         CompletableFuture<List<T>> ans = new CompletableFuture<>();
 
-        AtomicInteger nextId = new AtomicInteger(0);
+        int initialTasks = Math.min(maxConcurrent, tasks.size());
+        AtomicInteger nextId = new AtomicInteger(initialTasks);
         AtomicInteger completed = new AtomicInteger(0);
         AtomicBoolean failed = new AtomicBoolean(false);
 
@@ -88,7 +89,6 @@ public class ConcurrencyLimiterChallenge {
         }
 
         Scheduler scheduler = new Scheduler();
-        int initialTasks = Math.min(maxConcurrent, tasks.size());
 
         for(int i = 0; i < initialTasks; i++) {
             scheduler.startTask(i);
