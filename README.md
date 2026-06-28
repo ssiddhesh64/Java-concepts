@@ -54,6 +54,7 @@ Below is a complete index of all educational files in this repository, mapped to
 | [UnboxingDebug.java](file:///Users/siddheshsawant/Desktop/java/UnboxingDebug.java) | Auto-Unboxing NPE | Avoid unboxing crashes. | Unboxing a null wrapper type (e.g. `Integer`) to a primitive `int` throws a `NullPointerException`. |
 | [PrecisionDebug.java](file:///Users/siddheshsawant/Desktop/java/PrecisionDebug.java) | Float Precision | Float calculation limits. | Do not use `double`/`float` for currencies. Use `BigDecimal` or epsilon thresholds. |
 | [DateFormatDebug.java](file:///Users/siddheshsawant/Desktop/java/DateFormatDebug.java) | Thread Safety | Safe date formatting. | `SimpleDateFormat` is NOT thread-safe. Use `DateTimeFormatter`. |
+| [SimpleTtlCache.java](file:///Users/siddheshsawant/Desktop/java/SimpleTtlCache.java) | Thread-Safe TTL Cache | Concurrent TTL evictions. | Use `ConcurrentHashMap` for high-throughput reads/writes. Use `removeIf()` on the entrySet to avoid `ConcurrentModificationException` inside scheduled cleanup tasks. |
 
 ### 🏛️ SOLID Architecture & Modern Java
 
