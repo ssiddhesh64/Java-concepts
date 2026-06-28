@@ -105,15 +105,38 @@ public class OrderProcessor {
     }
 }
 
-record Order(String id, List<Item> items) {
-
+record Order(String id, List<Item> items, OrderType type, String email) {
+    
     public Order {
         if(id == null || id.isBlank()) {
             throw new IllegalArgumentException("id must not be null");
         }
         if(items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Order should contain items");
+        } 
+        if(type == null) {
+            throw new IllegalArgumentException("Order type cannot be null");
         }
+
+        if(email != null && !email.contains("@")) {
+            throw new IllegalArgumentException("Invalid Email");
+        }
+    }
+}
+
+enum OrderType {
+
+    VIP(0.10),
+    REGULAR(0.05);
+
+    private final double discountRate;
+
+    private OrderType(double discountRate) {
+        this.discountRate = discountRate;
+    }
+
+    public double getDiscountedPrice(double price) {
+        return price * (1 - discountRate);
     }
 }
 

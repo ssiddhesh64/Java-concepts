@@ -15,6 +15,22 @@ public class MergeMaps {
 
     static BiFunction<Integer, Integer, Integer> mergeFunction = (first, second) -> first + second;
 
+    // static BiFunction<Integer, Integer, Integer> mergeFunction2 = (first, second) -> {
+    //     if(first == null && second == null) return 0;
+    //     if(first == null) return second;
+    //     if(second == null) return first;
+
+    //     return Math.max(first, second);
+    // };
+
+    static BiFunction<Integer, Integer, Integer> mergeFunction2 = Math::max;
+
+    public static Map<String, Integer> mergeGrades(Map<String, Integer> math, Map<String, Integer> science) {
+        Map<String, Integer> result = new HashMap<>(Optional.ofNullable(math).orElse(Map.of()));
+        Optional.ofNullable(science).orElse(Map.of()).forEach((key,value) -> result.merge(key, value, Math::max));
+        return result;
+    }
+
     public static void main(String[] args) {
 
         Map<Integer, Integer> map1 = Map.of(1, 10, 2, 20);

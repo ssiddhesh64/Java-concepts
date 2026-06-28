@@ -1,6 +1,8 @@
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -77,6 +79,28 @@ public class ResilientStreamCollector {
                 return res1;
             }
         );
+    }
+
+    // @FunctionalInterface
+    // interface ThrowingFunction<T, R, E extends Exception> {
+    //     R apply(T t) throws E;
+    // }
+
+    static <T, R, E extends Exception>
+    Function<T, R> wrap (ThrowingFunction<T, R, E> fn) {
+        return t -> {
+            try {
+                return fn.apply(t);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    public static List<URI> parseUris(List<String> uriStrings) {
+        return uriStrings.stream()
+        .map(wrap(URI::new))
+        .toList();
     }
 
     // Test Harness
