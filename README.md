@@ -28,6 +28,7 @@ Below is a complete index of all educational files in this repository, mapped to
 | [ScatterGatherChallenge.java](file:///Users/siddheshsawant/Desktop/java/ScatterGatherChallenge.java) | Scatter-Gather Pattern | Parallel API calling. | Trigger requests in parallel, await with a timeout, and merge results. |
 | [SecurityContextHolder.java](file:///Users/siddheshsawant/Desktop/java/SecurityContextHolder.java) | ThreadLocal Storage | Thread-scoped data. | Always clean up using `ThreadLocal.remove()` in a `finally` block to prevent leaks in thread pools. |
 | [PaymentServiceRefactor.java](file:///Users/siddheshsawant/Desktop/java/PaymentServiceRefactor.java) | Async Non-Blocking Retries | Retry async tasks cleanly. | Avoid blocking loops (`Thread.sleep`). Recursively chain delayed retries via `ScheduledExecutorService`. |
+| [NestedTaskProcessor.java](file:///Users/siddheshsawant/Desktop/java/NestedTaskProcessor.java) | Thread Pool Starvation Deadlock | Expose nested task dependency hangs. | Do not submit dependent parent and subtasks to the same fixed thread pool. Solve by isolating pools or using non-blocking future pipelines. |
 
 ### 🌊 Streams, Lambdas & Optionals
 
