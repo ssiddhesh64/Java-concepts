@@ -30,6 +30,7 @@ Below is a complete index of all educational files in this repository, mapped to
 | [PaymentServiceRefactor.java](file:///Users/siddheshsawant/Desktop/java/PaymentServiceRefactor.java) | Async Non-Blocking Retries | Retry async tasks cleanly. | Avoid blocking loops (`Thread.sleep`). Recursively chain delayed retries via `ScheduledExecutorService`. |
 | [NestedTaskProcessor.java](file:///Users/siddheshsawant/Desktop/java/NestedTaskProcessor.java) | Thread Pool Starvation Deadlock | Expose nested task dependency hangs. | Do not submit dependent parent and subtasks to the same fixed thread pool. Solve by isolating pools or using non-blocking future pipelines. |
 | [SimpleCircuitBreaker.java](file:///Users/siddheshsawant/Desktop/java/SimpleCircuitBreaker.java) | Lock-Free Circuit Breaker | Safe multi-threaded state transitions. | Use `AtomicReference` and `compareAndSet()` to perform atomic state transitions (CLOSED, OPEN, HALF_OPEN) and avoid `synchronized` bottlenecks. Ensure concurrent requests fast-fail during half-open probing. |
+| [ServerStatusManager.java](file:///Users/siddheshsawant/Desktop/java/ServerStatusManager.java) | Volatile Array Mechanics | Expose array element thread-visibility bug. | Volatile array references do not make the individual elements volatile. Solve by using flat collections like `AtomicIntegerArray` to prevent wrapper object allocation overheads. |
 
 ### 🌊 Streams, Lambdas & Optionals
 
