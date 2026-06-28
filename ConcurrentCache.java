@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Atomic Cache Updates with ConcurrentHashMap
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates how to implement thread-safe memoization/caching using ConcurrentHashMap's atomic compute methods.
+ * 
+ * KEY LESSONS:
+ * - Check-then-act operations (get and then put) on ConcurrentHashMap are not atomic.
+ * - Use ConcurrentHashMap.computeIfAbsent() to ensure atomic calculation and storage of cached entries.
+ */
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;

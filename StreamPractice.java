@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Optionals Chaining & Streams Filtering
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates clean, nested Optional mapping and average salary calculations.
+ * 
+ * KEY LESSONS:
+ * - Use Optional.map() to safely navigate chains of nullable references.
+ * - Use Objects::nonNull to filter stream nulls cleanly.
+ */
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.*;

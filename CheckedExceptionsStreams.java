@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Handling Checked Exceptions in Streams
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates different strategies for managing checked exceptions in functional pipelines, such as wrapping and mapping.
+ * 
+ * KEY LESSONS:
+ * - Wrapping throwing functions into runtime exceptions enables compiling streams.
+ * - Design custom functional interfaces (e.g. ThrowingConsumer) to capture exceptions.
+ */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

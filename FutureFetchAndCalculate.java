@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: CompletableFuture Pipeline Assembly
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to chain, combine, and handle errors in async pipelines.
+ * 
+ * KEY LESSONS:
+ * - Use thenCombine() to combine the results of two independent futures.
+ * - Use exceptionally() at the end of the pipeline to catch all intermediate errors.
+ */
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: ExecutorService vs. Manual Threads
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Refactors manual thread creation inside a loop into a clean, pool-backed parallel processor using CompletableFuture.
+ * 
+ * KEY LESSONS:
+ * - Creating threads manually in a loop is an anti-pattern that leads to resource starvation.
+ * - Use a dedicated ExecutorService to control thread counts and recycle threads.
+ * - Streams are lazy and require a terminal operation (like .toList()) to trigger execution.
+ */
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

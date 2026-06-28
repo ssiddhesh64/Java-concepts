@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: List SubList View Mechanics & Memory Leaks
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows why list.subList causes ConcurrentModificationException when the parent list is modified, and explains its memory leak.
+ * 
+ * KEY LESSONS:
+ * - List.subList returns a view, not a copy.
+ * - Modifying the parent list invalidates all sublist views.
+ * - SubList holds a strong reference to the parent. Detach them via new ArrayList<>(subList) to prevent memory leaks.
+ */
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.List;

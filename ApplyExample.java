@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Polymorphic Enums with Checked Exceptions
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates how to delegate behavior to enum constants using abstract methods while correctly handling custom checked exceptions in the signature.
+ * 
+ * KEY LESSONS:
+ * - Polymorphic enums allow you to define constant-specific behaviors instead of large switch-cases.
+ * - Abstract methods declared on the enum class can throw checked exceptions that each constant must implement or declare.
+ */
 import java.util.*;
 import java.util.stream.Stream;
 class InvalidOperationException extends Exception{

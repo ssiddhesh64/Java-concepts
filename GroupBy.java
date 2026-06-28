@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Stream groupingBy Collector
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates how to group stream elements by a property into a Map.
+ * 
+ * KEY LESSONS:
+ * - Collectors.groupingBy() splits a stream into buckets.
+ * - Downstream collectors can perform aggregations (like counting or averaging) within each bucket.
+ */
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

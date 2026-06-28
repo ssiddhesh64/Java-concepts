@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Legacy Procedural Design Review
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Acts as the starting point for refactoring, showing high nesting and SOLID violations.
+ * 
+ * KEY LESSONS:
+ * - Procedural code with multiple concerns violates SRP and is hard to extend.
+ * - Avoid deep nesting (arrow shape) by using guard clauses.
+ */
 import java.util.*;
 
 class PricingService {

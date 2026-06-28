@@ -1,3 +1,12 @@
+/**
+ * CONCEPT TAUGHT: General Problem-Solving Template
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - A clean skeleton class for writing algorithms.
+ * 
+ * KEY LESSONS:
+ * - Structure programs with clean separation of entry point and logic.
+ */
 import java.util.*;
 import java.util.stream.Collectors;
 

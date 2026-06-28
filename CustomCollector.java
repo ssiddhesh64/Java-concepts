@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Custom Stream Collectors
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates how to build a custom Collector using Collector.of() for complex stream aggregation.
+ * 
+ * KEY LESSONS:
+ * - Collector.of() requires a supplier, accumulator, combiner, and finisher.
+ * - The combiner is critical for parallel streams to merge intermediate results safely.
+ */
 import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.stream.Collector;

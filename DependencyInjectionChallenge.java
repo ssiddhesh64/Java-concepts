@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Custom Reflection-Based DI Container
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates the core mechanics of Dependency Injection using Java Reflection and custom annotations.
+ * 
+ * KEY LESSONS:
+ * - Reflection allows scanning classes for custom annotations (like @Component, @Autowired).
+ * - A simple DI container manages the lifecycle and wiring of singleton instances.
+ */
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.util.*;

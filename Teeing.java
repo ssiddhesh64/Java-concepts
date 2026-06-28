@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Double Aggregation via Collectors.teeing()
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates double aggregation (finding min and max simultaneously) in a single stream pass.
+ * 
+ * KEY LESSONS:
+ * - Collectors.teeing() runs two collectors on the same stream and merges their results.
+ * - Use explicit type witnesses (like Comparator.<Integer>naturalOrder()) to resolve nested compiler type-inference issues.
+ */
 import java.util.*;
 import java.util.stream.Collectors;
 

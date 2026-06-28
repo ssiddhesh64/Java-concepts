@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Stateless Exporter & Decoupling
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Refactors report exporting into a stateless service pattern using records.
+ * 
+ * KEY LESSONS:
+ * - Separate state (records) from behaviors (stateless service classes).
+ * - Method arguments should pass dynamic state; constructors should inject stateless dependencies.
+ */
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Stream Reuse Limitation
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates that streams cannot be reused once a terminal operation is called.
+ * 
+ * KEY LESSONS:
+ * - Streams are single-use pipelines. Re-evaluating a stream throws IllegalStateException.
+ * - To reuse elements, collect them to a list or generate a new stream.
+ */
 import java.util.*;
 
 public class StreamReuseDebug {

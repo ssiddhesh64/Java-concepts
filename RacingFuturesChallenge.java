@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Racing Async Tasks with anyOf
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - A challenge to trigger parallel requests and consume the first successful result.
+ * 
+ * KEY LESSONS:
+ * - CompletableFuture.anyOf() returns when the first future completes.
+ * - Handle errors carefully when using anyOf to prevent failures from masking successes.
+ */
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

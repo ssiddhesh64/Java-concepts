@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Checked Exception Propagation in Streams
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Solves the limitation where Stream lambda expressions cannot throw checked exceptions by wrapping and unwrapping exceptions.
+ * 
+ * KEY LESSONS:
+ * - Checked exceptions inside streams must be wrapped in an unchecked exception (like a custom RuntimeException).
+ * - Catch the wrapper exception outside the stream pipeline and unwrap/rethrow the original checked exception.
+ */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;

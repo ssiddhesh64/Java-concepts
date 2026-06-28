@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Java 8+ Comparator Chaining
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to chain multiple sort parameters in a declarative manner.
+ * 
+ * KEY LESSONS:
+ * - Comparator.comparing() and thenComparing() chain sort orders.
+ * - Use Comparator.reverseOrder() or reversed() for descending sorts.
+ */
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;

@@ -1,3 +1,15 @@
+/**
+ * CONCEPT TAUGHT: Non-blocking Asynchronous Retries with CompletableFuture
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Refactors a blocking retry payment loop into a stateless, non-blocking async pipeline.
+ * 
+ * KEY LESSONS:
+ * - Do not mix synchronous loops with asynchronous scheduling.
+ * - Do not put mutable state (like retry count) in service fields.
+ * - ScheduledExecutorService is required for delayed execution.
+ * - Chain retries recursively using handle() and thenCompose().
+ */
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

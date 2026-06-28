@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Scatter-Gather Concurrency Pattern
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates triggering multiple parallel tasks and waiting for them with a timeout.
+ * 
+ * KEY LESSONS:
+ * - Trigger tasks in parallel (scatter), await their completion with timeout (gather), and merge results.
+ * - Ensures slow external APIs do not block the thread pool indefinitely.
+ */
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;

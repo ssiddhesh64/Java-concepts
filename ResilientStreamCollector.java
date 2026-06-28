@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Partitioning Successes and Failures in Streams
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Creates a custom Collector that collects exceptions and successful values separately rather than aborting.
+ * 
+ * KEY LESSONS:
+ * - A custom collector can collect stream processing side effects (exceptions) into a container class.
+ * - This keeps the stream resilient, processing all elements and returning successes and failures separately.
+ */
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.NoSuchFileException;

@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: SOLID Decoupling, HexFormat, and Java 8 Date/Time
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Refactors legacy registration service into a highly SRP/DIP compliant structure using modern Java 17 tools.
+ * 
+ * KEY LESSONS:
+ * - Use interface injection for validations, repositories, and hashing.
+ * - Replaced SimpleDateFormat and legacy Date with thread-safe LocalDate and Period.
+ * - Use HexFormat.of().formatHex() for clean byte-to-hex formatting.
+ */
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;

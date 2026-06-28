@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Thread Coordination with CountDownLatch
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Implements a service startup coordinator that blocks the main thread until three worker tasks complete.
+ * 
+ * KEY LESSONS:
+ * - CountDownLatch is perfect for waiting for multiple threads to reach a checkpoint.
+ * - Ensure the counting variables / registration collections are thread-safe (e.g. ConcurrentHashMap.newKeySet()).
+ */
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.HashSet;

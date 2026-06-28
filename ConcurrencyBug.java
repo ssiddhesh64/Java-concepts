@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Thread-Safety in Shared Collections
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates the dangers of concurrent writes to a non-thread-safe ArrayList and shows how to resolve it.
+ * 
+ * KEY LESSONS:
+ * - Concurrent writes to standard collections lead to data corruption, lost updates, or sizing errors.
+ * - Use Collections.synchronizedList() or CopyOnWriteArrayList depending on the read/write load profile.
+ */
 import java.util.*;
 import java.util.concurrent.*;
 

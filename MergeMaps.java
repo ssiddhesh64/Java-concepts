@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Atomic Map Merging with Map.merge()
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to merge two maps using Map.merge() and resolving value collisions using lambdas.
+ * 
+ * KEY LESSONS:
+ * - Map.merge() performs atomic key additions or value updates using a merging function.
+ * - The merging function is only called if both maps have values for a key; nulls are not passed to it.
+ */
 import java.util.*;
 import java.util.function.BiFunction;
 

@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: Sealed Classes, Records, and Pattern Matching
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates modern Java syntax including sealed interfaces, records, and pattern matching.
+ * 
+ * KEY LESSONS:
+ * - Sealed classes/interfaces restrict subclass inheritance.
+ * - Records are concise data carriers.
+ * - Pattern matching instanceof automatically binds variables upon type check.
+ */
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

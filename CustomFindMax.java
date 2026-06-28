@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Custom Reductions in Streams
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to implement custom reduction logic to find maximum values under specific constraints.
+ * 
+ * KEY LESSONS:
+ * - Use Stream.reduce() or custom collectors to customize stream aggregations.
+ * - Provide appropriate identity values or handle Optionals correctly.
+ */
 import java.util.Collection;
 
 public class CustomFindMax {

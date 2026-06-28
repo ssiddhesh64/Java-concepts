@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: JVM Shutdown Hooks for Resource Cleanup
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates how to clean up temporary directory structures automatically when the JVM exits.
+ * 
+ * KEY LESSONS:
+ * - Runtime.getRuntime().addShutdownHook() registers cleanup actions.
+ * - Shutdown hooks must be thread-safe and handle exceptions gracefully.
+ */
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;

@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Thread Pool Policies and Thread Factories
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - A deep dive into ThreadPoolExecutor configurations, custom ThreadFactories, and RejectedExecutionHandlers.
+ * 
+ * KEY LESSONS:
+ * - Custom RejectedExecutionHandlers can implement blocking rejection policies.
+ * - ThreadFactories allow naming and setting daemon status on thread pool threads.
+ */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;

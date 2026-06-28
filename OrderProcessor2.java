@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: SOLID Decoupling and Polymorphic Enums
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - The refactored version of OrderProcessor showing clean decoupling, interfaces, and polymorphic enums.
+ * 
+ * KEY LESSONS:
+ * - Inject interfaces for external tasks (DIP).
+ * - Polymorphic enums delegate specific logic (like discounts) cleanly.
+ */
 import java.util.List;
 
 interface DatabaseOrderRepository {

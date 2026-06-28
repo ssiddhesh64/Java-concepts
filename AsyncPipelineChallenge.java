@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: CompletableFuture Pipeline Coordination
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - A challenge to coordinate parallel and sequential asynchronous tasks with dependencies, ensuring correct handling of partial failures.
+ * 
+ * KEY LESSONS:
+ * - Use CompletableFuture.allOf() to run unrelated asynchronous tasks in parallel.
+ * - Use thenCompose() to chain dependent async tasks without nesting futures.
+ * - Ensure exception propagation handles failures gracefully without hanging.
+ */
 import java.util.concurrent.*;
 
 record User(String userId, String email, double balance) {}

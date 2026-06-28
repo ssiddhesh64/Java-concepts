@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Auto-Unboxing NullPointerExceptions
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Exposes how compiler auto-unboxing of wrapper nulls causes unexpected NullPointerExceptions.
+ * 
+ * KEY LESSONS:
+ * - Unboxing a null wrapper (e.g. Integer which is null into a primitive int) throws NullPointerException.
+ * - Check for null before assigning wrappers to primitives.
+ */
 import java.util.*;
 
 public class UnboxingDebug {

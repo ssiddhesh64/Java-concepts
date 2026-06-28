@@ -1,3 +1,14 @@
+/**
+ * CONCEPT TAUGHT: Non-blocking Asynchronous Retries
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to implement a retry mechanism for async tasks without blocking threads using a ScheduledExecutorService.
+ * 
+ * KEY LESSONS:
+ * - Do not use Thread.sleep() inside async tasks as it blocks carrier/pool threads.
+ * - Use ScheduledExecutorService.schedule() to trigger delayed attempts asynchronously.
+ * - Chain delayed attempts recursively via CompletableFuture pipelines.
+ */
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;

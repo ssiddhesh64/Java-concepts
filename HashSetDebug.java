@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Immutability in Hash Collections
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how mutating objects stored in a HashSet leads to duplicate entries or elements getting 'lost'.
+ * 
+ * KEY LESSONS:
+ * - HashMap/HashSet keys must be immutable.
+ * - If an object's fields change, its hashCode changes, making it impossible to find in its bucket.
+ */
 import java.util.*;
 
 public class HashSetDebug {

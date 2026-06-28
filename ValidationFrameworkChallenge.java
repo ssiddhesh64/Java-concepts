@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Reflection-Based Annotation Validation
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Builds a custom framework that validates record constraints using Reflection and custom annotations.
+ * 
+ * KEY LESSONS:
+ * - Reflection can read field annotations at runtime.
+ * - Useful for building validation logic similar to Jakarta Bean Validation.
+ */
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.util.*;

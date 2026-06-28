@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Stream partitioningBy Collector
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Demonstrates partitioning stream elements into true/false lists based on a predicate.
+ * 
+ * KEY LESSONS:
+ * - Collectors.partitioningBy() always returns a Map<Boolean, List<T>>.
+ * - It is a specialized form of groupingBy optimized for binary conditions.
+ */
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;

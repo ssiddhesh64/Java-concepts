@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Polymorphic Enum Pattern
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to implement constant-specific behavior in Enums using abstract methods.
+ * 
+ * KEY LESSONS:
+ * - Enums can declare abstract methods implemented by each constant.
+ * - Align method visibility (e.g. public abstract) to prevent scope narrowing warnings.
+ */
 enum BillingPlan {
 
     FLAT_RATE {

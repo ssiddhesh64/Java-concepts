@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: ThreadLocal Storage Pattern
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - Shows how to associate user contexts/security contexts with the current executing thread.
+ * 
+ * KEY LESSONS:
+ * - ThreadLocal isolates data per-thread.
+ * - Always call .remove() in a finally block to avoid memory leaks in thread pools.
+ */
 import java.util.concurrent.*;
 
 public class SecurityContextHolder {

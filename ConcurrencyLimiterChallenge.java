@@ -1,3 +1,13 @@
+/**
+ * CONCEPT TAUGHT: Semaphore-based Rate/Concurrency Limiting
+ * 
+ * WHY THIS WAS WRITTEN:
+ * - A challenge to restrict concurrent execution of a slow method using a Semaphore.
+ * 
+ * KEY LESSONS:
+ * - Semaphores are ideal for restricting the maximum number of concurrent threads entering a block of code.
+ * - Always call semaphore.release() in a finally block to prevent resource leaks on exceptions.
+ */
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
