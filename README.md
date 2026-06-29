@@ -64,6 +64,7 @@ Below is a complete index of all educational files in this repository, mapped to
 | [PrecisionDebug.java](file:///Users/siddheshsawant/Desktop/java/PrecisionDebug.java) | Float Precision | Float calculation limits. | Do not use `double`/`float` for currencies. Use `BigDecimal` or epsilon thresholds. |
 | [DateFormatDebug.java](file:///Users/siddheshsawant/Desktop/java/DateFormatDebug.java) | Thread Safety | Safe date formatting. | `SimpleDateFormat` is NOT thread-safe. Use `DateTimeFormatter`. |
 | [SimpleTtlCache.java](file:///Users/siddheshsawant/Desktop/java/SimpleTtlCache.java) | Thread-Safe TTL Cache | Concurrent TTL evictions. | Use `ConcurrentHashMap` for high-throughput reads/writes. Use `removeIf()` on the entrySet to avoid `ConcurrentModificationException` inside scheduled cleanup tasks. |
+| [LogAnalyzer.java](file:///Users/siddheshsawant/Desktop/java/LogAnalyzer.java) | File Descriptor Leak | Safely close files when using Streams. | Stream references returned by file reading APIs (like `Files.lines()`) hold underlying physical resources and do not automatically close on loop completion. Always wrap them in try-with-resources. |
 
 ### 🏛️ SOLID Architecture & Modern Java
 
