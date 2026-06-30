@@ -34,6 +34,6 @@ public class ComparatorExample {
 
     // Nested helper class to prevent namespace conflicts
     static record Employee(String dept, String name, double salary) {
-}
+    }
 
 }
