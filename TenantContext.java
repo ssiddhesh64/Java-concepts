@@ -9,4 +9,15 @@ public class TenantContext {
     public static String getTenantId() {
         return context.get();
     }
+
+    public static void main(String[] args) {
+        Runnable task = () -> {
+            try (AutoCloseable ctx = TenantContext.setTenantId("tenant-123")) {
+                System.out.println("Current Tenant ID: " + TenantContext.getTenantId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+        task.run();
+    }
 }
