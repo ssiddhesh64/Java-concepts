@@ -2,13 +2,12 @@ package com.example.concepts.solid;
 
 /**
  * CONCEPT TAUGHT: Legacy Procedural Design Review
- * 
- * WHY THIS WAS WRITTEN:
- * - Acts as the starting point for refactoring, showing high nesting and SOLID violations.
- * 
- * KEY LESSONS:
- * - Procedural code with multiple concerns violates SRP and is hard to extend.
- * - Avoid deep nesting (arrow shape) by using guard clauses.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Acts as the starting point for refactoring, showing high nesting and
+ * SOLID violations.
+ *
+ * <p>KEY LESSONS: - Procedural code with multiple concerns violates SRP and is hard to extend. -
+ * Avoid deep nesting (arrow shape) by using guard clauses.
  */
 import java.util.*;
 
@@ -19,9 +18,7 @@ public class OrderProcessor {
     private final OrderLogger orderLogger;
 
     public OrderProcessor(
-            PricingService pricingService,
-            OrderRepository repository,
-            OrderLogger logger) {
+            PricingService pricingService, OrderRepository repository, OrderLogger logger) {
 
         this.pricingService = pricingService;
         this.orderRepository = repository;
@@ -40,10 +37,10 @@ public class OrderProcessor {
     //             if (shouldApplyFlatDiscount(total)) {
     //                 total = total - 10; // flat discount for orders over 100
     //             }
-                
+
     //             System.out.println("Processing order: " + o.id);
     //             System.out.println("Total Price: " + total);
-                
+
     //             // simulate database saving
     //             System.out.println("Saving order to database...");
     //         } else {
@@ -55,11 +52,11 @@ public class OrderProcessor {
     // }
 
     public void process(Order o) {
-        
-        if(o == null || o.items() == null || o.items().isEmpty()) {
+
+        if (o == null || o.items() == null || o.items().isEmpty()) {
             throw new IllegalArgumentException("Invalid Order");
         }
-        
+
         double total = pricingService.calculateTotal(o);
 
         orderRepository.save(o);
@@ -69,118 +66,118 @@ public class OrderProcessor {
     // Nested helper class to prevent namespace conflicts
     static class PricingService {
 
-    public double calculateTotal(Order o) {
-        
-        double total = o.items().stream()
-        .mapToDouble(item -> item.category().getDiscountedPrice(item.price()))
-        .sum();
+        public double calculateTotal(Order o) {
 
-        if(total > PricingRules.FLAT_DISCOUNT_THRESHOLD) {
-            total -= PricingRules.FLAT_DISCOUNT_AMOUNT;
+            double total =
+                    o.items().stream()
+                            .mapToDouble(item -> item.category().getDiscountedPrice(item.price()))
+                            .sum();
+
+            if (total > PricingRules.FLAT_DISCOUNT_THRESHOLD) {
+                total -= PricingRules.FLAT_DISCOUNT_AMOUNT;
+            }
+
+            return total;
         }
-
-        return total;
     }
-}
 
     // Nested helper class to prevent namespace conflicts
-    final static class PricingRules {
+    static final class PricingRules {
 
-    private PricingRules() {};
+        private PricingRules() {}
+        ;
 
-    public static final double FLAT_DISCOUNT_THRESHOLD = 100.0;
-    public static final double FLAT_DISCOUNT_AMOUNT = 10.0;
-}
+        public static final double FLAT_DISCOUNT_THRESHOLD = 100.0;
+        public static final double FLAT_DISCOUNT_AMOUNT = 10.0;
+    }
 
     // Nested helper class to prevent namespace conflicts
     static interface OrderRepository {
-    void save(Order order);
-}
+        void save(Order order);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class DatabaseOrderRepository implements OrderRepository {
 
-    @Override
-    public void save(Order order) {
-        System.out.println("Saving order to database...");
+        @Override
+        public void save(Order order) {
+            System.out.println("Saving order to database...");
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static interface OrderLogger {
-    void log(Order order, double total);
-}
+        void log(Order order, double total);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class ConsoleLogger implements OrderLogger {
 
-    @Override
-    public void log(Order order, double total) {
-        System.out.println("Order ID: " + order.id() + ", Total: " + total);
+        @Override
+        public void log(Order order, double total) {
+            System.out.println("Order ID: " + order.id() + ", Total: " + total);
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static record Order(String id, List<Item> items, OrderType type, String email) {
-    
-    public Order {
-        if(id == null || id.isBlank()) {
-            throw new IllegalArgumentException("id must not be null");
-        }
-        if(items == null || items.isEmpty()) {
-            throw new IllegalArgumentException("Order should contain items");
-        } 
-        if(type == null) {
-            throw new IllegalArgumentException("Order type cannot be null");
-        }
 
-        if(email != null && !email.contains("@")) {
-            throw new IllegalArgumentException("Invalid Email");
+        public Order {
+            if (id == null || id.isBlank()) {
+                throw new IllegalArgumentException("id must not be null");
+            }
+            if (items == null || items.isEmpty()) {
+                throw new IllegalArgumentException("Order should contain items");
+            }
+            if (type == null) {
+                throw new IllegalArgumentException("Order type cannot be null");
+            }
+
+            if (email != null && !email.contains("@")) {
+                throw new IllegalArgumentException("Invalid Email");
+            }
         }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static enum OrderType {
+        VIP(0.10),
+        REGULAR(0.05);
 
-    VIP(0.10),
-    REGULAR(0.05);
+        private final double discountRate;
 
-    private final double discountRate;
+        private OrderType(double discountRate) {
+            this.discountRate = discountRate;
+        }
 
-    private OrderType(double discountRate) {
-        this.discountRate = discountRate;
+        public double getDiscountedPrice(double price) {
+            return price * (1 - discountRate);
+        }
     }
-
-    public double getDiscountedPrice(double price) {
-        return price * (1 - discountRate);
-    }
-}
 
     // Nested helper class to prevent namespace conflicts
     static record Item(Category category, double price) {
-    public Item {
-        if(price < 0) {
-            throw new IllegalArgumentException("Price cannot be negative");
+        public Item {
+            if (price < 0) {
+                throw new IllegalArgumentException("Price cannot be negative");
+            }
         }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static enum Category {
-    ELECTRONICS(0.10),
-    CLOTHING(0.05),
-    OTHER(0.0);
+        ELECTRONICS(0.10),
+        CLOTHING(0.05),
+        OTHER(0.0);
 
-    private final double discountRate;
+        private final double discountRate;
 
-    private Category(double discountRate) {
-        this.discountRate = discountRate;
+        private Category(double discountRate) {
+            this.discountRate = discountRate;
+        }
+
+        public double getDiscountedPrice(double price) {
+            return price * (1 - discountRate);
+        }
     }
-
-    public double getDiscountedPrice(double price) {
-        return price * (1 - discountRate);
-    }
-}
-
 }

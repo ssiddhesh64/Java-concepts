@@ -2,12 +2,11 @@ package com.example.concepts.streams;
 
 /**
  * CONCEPT TAUGHT: Handling Checked Exceptions in Streams
- * 
- * WHY THIS WAS WRITTEN:
- * - Demonstrates different strategies for managing checked exceptions in functional pipelines, such as wrapping and mapping.
- * 
- * KEY LESSONS:
- * - Wrapping throwing functions into runtime exceptions enables compiling streams.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Demonstrates different strategies for managing checked exceptions in
+ * functional pipelines, such as wrapping and mapping.
+ *
+ * <p>KEY LESSONS: - Wrapping throwing functions into runtime exceptions enables compiling streams.
  * - Design custom functional interfaces (e.g. ThrowingConsumer) to capture exceptions.
  */
 import java.text.ParseException;
@@ -31,8 +30,8 @@ public class CheckedExceptionsStreams {
     }
 
     /**
-     * A wrapper class to represent the result of an operation that might fail.
-     * Often referred to as "Either" (Success or Failure) in functional programming.
+     * A wrapper class to represent the result of an operation that might fail. Often referred to as
+     * "Either" (Success or Failure) in functional programming.
      */
     public static class Result<T> {
         private final T value;
@@ -77,9 +76,8 @@ public class CheckedExceptionsStreams {
     }
 
     /**
-     * Requirement 1:
-     * Implement this method to wrap a ThrowingFunction into a standard Java Function.
-     * If the throwing function throws a checked exception, it should be caught and
+     * Requirement 1: Implement this method to wrap a ThrowingFunction into a standard Java
+     * Function. If the throwing function throws a checked exception, it should be caught and
      * wrapped in a RuntimeException.
      */
     public static <T, R> Function<T, R> unchecked(ThrowingFunction<T, R, ?> throwingFunction) {
@@ -94,17 +92,16 @@ public class CheckedExceptionsStreams {
     }
 
     /**
-     * Requirement 2:
-     * Implement this method to wrap a ThrowingFunction into a standard Java Function using "Sneaky Throws".
-     * This tricks the compiler into letting you throw a checked exception without wrapping it in a RuntimeException
-     * and without declaring it in the throws clause.
+     * Requirement 2: Implement this method to wrap a ThrowingFunction into a standard Java Function
+     * using "Sneaky Throws". This tricks the compiler into letting you throw a checked exception
+     * without wrapping it in a RuntimeException and without declaring it in the throws clause.
      */
     public static <T, R> Function<T, R> sneaky(ThrowingFunction<T, R, ?> throwingFunction) {
         // TODO: Implement sneaky throws wrapper
         return t -> {
             try {
                 return throwingFunction.apply(t);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 sneakyThrow(ex);
             }
             return null;
@@ -112,9 +109,8 @@ public class CheckedExceptionsStreams {
     }
 
     /**
-     * Requirement 3:
-     * Implement this method to safely run a ThrowingSupplier and return a Result object
-     * indicating success (with value) or failure (with exception).
+     * Requirement 3: Implement this method to safely run a ThrowingSupplier and return a Result
+     * object indicating success (with value) or failure (with exception).
      */
     public static <T> Result<T> wrapResult(ThrowingSupplier<T, ?> supplier) {
         // TODO: Implement result wrapper
@@ -141,10 +137,12 @@ public class CheckedExceptionsStreams {
         // Test 1: Unchecked Wrapper
         System.out.println("\n--- Test 1: Unchecked Wrapper ---");
         try {
-            List<Date> parsedDates = dates.stream()
-                .map(unchecked(CheckedExceptionsStreams::parseDate))
-                .collect(Collectors.toList());
-            System.err.println("Test 1 Failed: Expected exception but succeeded. Result: " + parsedDates);
+            List<Date> parsedDates =
+                    dates.stream()
+                            .map(unchecked(CheckedExceptionsStreams::parseDate))
+                            .collect(Collectors.toList());
+            System.err.println(
+                    "Test 1 Failed: Expected exception but succeeded. Result: " + parsedDates);
         } catch (RuntimeException e) {
             System.out.println("Caught Expected RuntimeException: " + e.getClass().getName());
             if (e.getCause() instanceof ParseException) {
@@ -157,25 +155,30 @@ public class CheckedExceptionsStreams {
         // Test 2: Sneaky Throws Wrapper
         System.out.println("\n--- Test 2: Sneaky Throws Wrapper ---");
         try {
-            List<Date> parsedDates = dates.stream()
-                .map(sneaky(CheckedExceptionsStreams::parseDate))
-                .collect(Collectors.toList());
-            System.err.println("Test 2 Failed: Expected exception but succeeded. Result: " + parsedDates);
+            List<Date> parsedDates =
+                    dates.stream()
+                            .map(sneaky(CheckedExceptionsStreams::parseDate))
+                            .collect(Collectors.toList());
+            System.err.println(
+                    "Test 2 Failed: Expected exception but succeeded. Result: " + parsedDates);
         } catch (Throwable t) {
             System.out.println("Caught Exception: " + t.getClass().getName());
             // Assert that it is a ParseException and NOT a RuntimeException
             if (t instanceof ParseException) {
                 System.out.println("SUCCESS: Caught raw ParseException!");
             } else {
-                System.err.println("FAILURE: Expected raw ParseException but caught: " + t.getClass().getName());
+                System.err.println(
+                        "FAILURE: Expected raw ParseException but caught: "
+                                + t.getClass().getName());
             }
         }
 
         // Test 3: Result Wrapper (Safe Stream Processing)
         System.out.println("\n--- Test 3: Result Wrapper (Safe Stream Processing) ---");
-        List<Result<Date>> results = dates.stream()
-            .map(dateStr -> wrapResult(() -> parseDate(dateStr)))
-            .collect(Collectors.toList());
+        List<Result<Date>> results =
+                dates.stream()
+                        .map(dateStr -> wrapResult(() -> parseDate(dateStr)))
+                        .collect(Collectors.toList());
 
         System.out.println("All results: " + results);
 
@@ -185,8 +188,11 @@ public class CheckedExceptionsStreams {
         if (successCount == 2 && failureCount == 1) {
             System.out.println("SUCCESS: Processed successes and failures separately");
         } else {
-            System.err.println("FAILURE: Expected 2 successes and 1 failure, but got " + successCount + " and " + failureCount);
+            System.err.println(
+                    "FAILURE: Expected 2 successes and 1 failure, but got "
+                            + successCount
+                            + " and "
+                            + failureCount);
         }
     }
-
 }

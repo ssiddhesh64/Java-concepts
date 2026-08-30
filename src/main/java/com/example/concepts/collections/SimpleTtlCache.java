@@ -1,7 +1,5 @@
 package com.example.concepts.collections;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -56,7 +54,8 @@ public class SimpleTtlCache {
     }
 
     public void cleanUp() {
-        cache.entrySet().removeIf(entry -> System.currentTimeMillis() > entry.getValue().expiryTime());
+        cache.entrySet()
+                .removeIf(entry -> System.currentTimeMillis() > entry.getValue().expiryTime());
     }
 
     void shutdown() {
@@ -95,7 +94,5 @@ public class SimpleTtlCache {
     // }
     // }
 
-    record CacheEntry(String value, long expiryTime) {
-    }
-
+    record CacheEntry(String value, long expiryTime) {}
 }

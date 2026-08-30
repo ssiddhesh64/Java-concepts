@@ -9,13 +9,16 @@ public class SilentAuditLogger {
 
     public void logAudit(String event) {
         // Runs task in background
-        CompletableFuture.runAsync(() -> {
-            saveToDatabase(event); // This throws RuntimeException when DB is down
-        }, executor)
-                .exceptionally(ex -> {
-                    System.err.println(ex.getMessage());
-                    return null;
-                });
+        CompletableFuture.runAsync(
+                        () -> {
+                            saveToDatabase(event); // This throws RuntimeException when DB is down
+                        },
+                        executor)
+                .exceptionally(
+                        ex -> {
+                            System.err.println(ex.getMessage());
+                            return null;
+                        });
         // The future is discarded immediately
     }
 
@@ -25,5 +28,4 @@ public class SilentAuditLogger {
         }
         System.out.println("Saved audit event: " + event);
     }
-
 }

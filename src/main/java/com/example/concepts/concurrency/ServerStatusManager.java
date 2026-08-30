@@ -33,5 +33,4 @@ public class ServerStatusManager {
         }
         return false;
     }
-
 }

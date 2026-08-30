@@ -2,15 +2,13 @@ package com.example.concepts.concurrency;
 
 /**
  * CONCEPT TAUGHT: Non-blocking Asynchronous Retries with CompletableFuture
- * 
- * WHY THIS WAS WRITTEN:
- * - Refactors a blocking retry payment loop into a stateless, non-blocking async pipeline.
- * 
- * KEY LESSONS:
- * - Do not mix synchronous loops with asynchronous scheduling.
- * - Do not put mutable state (like retry count) in service fields.
- * - ScheduledExecutorService is required for delayed execution.
- * - Chain retries recursively using handle() and thenCompose().
+ *
+ * <p>WHY THIS WAS WRITTEN: - Refactors a blocking retry payment loop into a stateless, non-blocking
+ * async pipeline.
+ *
+ * <p>KEY LESSONS: - Do not mix synchronous loops with asynchronous scheduling. - Do not put mutable
+ * state (like retry count) in service fields. - ScheduledExecutorService is required for delayed
+ * execution. - Chain retries recursively using handle() and thenCompose().
  */
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,7 +20,9 @@ public class PaymentServiceRefactor {
     PaymentGateway paymentGateway;
     NotificationService notificationService;
 
-    PaymentServiceRefactor(ScheduledExecutorService executor, PaymentGateway paymentGateway,
+    PaymentServiceRefactor(
+            ScheduledExecutorService executor,
+            PaymentGateway paymentGateway,
             NotificationService notificationService) {
         this.scheduler = executor;
         this.paymentGateway = paymentGateway;
@@ -39,29 +39,40 @@ public class PaymentServiceRefactor {
     }
 
     private CompletableFuture<Boolean> attemptPaymentAsync(Order order, int remainingRetries) {
-        return CompletableFuture.supplyAsync(() -> {
-            paymentGateway.processPayment(order);
-            notificationService.sendEmail(order.email(), "Payment Successful");
-            return true;
-        }, scheduler).handle((sucess, ex) -> {
-            if (ex == null) {
-                return CompletableFuture.completedFuture(true);
-            }
+        return CompletableFuture.supplyAsync(
+                        () -> {
+                            paymentGateway.processPayment(order);
+                            notificationService.sendEmail(order.email(), "Payment Successful");
+                            return true;
+                        },
+                        scheduler)
+                .handle(
+                        (sucess, ex) -> {
+                            if (ex == null) {
+                                return CompletableFuture.completedFuture(true);
+                            }
 
-            if (remainingRetries <= 1) {
-                System.out.println("Payment Failed. All retries exhausted.");
-                return CompletableFuture.completedFuture(false);
-            }
+                            if (remainingRetries <= 1) {
+                                System.out.println("Payment Failed. All retries exhausted.");
+                                return CompletableFuture.completedFuture(false);
+                            }
 
-            System.out.println("Failed. Retrying in 1 second. Remaining retries: " + (remainingRetries - 1));
+                            System.out.println(
+                                    "Failed. Retrying in 1 second. Remaining retries: "
+                                            + (remainingRetries - 1));
 
-            CompletableFuture<Boolean> nextAttempt = new CompletableFuture<>();
-            scheduler.schedule(() -> {
-                attemptPaymentAsync(order, remainingRetries - 1).thenAccept(nextAttempt::complete);
-            }, 1, TimeUnit.SECONDS);
+                            CompletableFuture<Boolean> nextAttempt = new CompletableFuture<>();
+                            scheduler.schedule(
+                                    () -> {
+                                        attemptPaymentAsync(order, remainingRetries - 1)
+                                                .thenAccept(nextAttempt::complete);
+                                    },
+                                    1,
+                                    TimeUnit.SECONDS);
 
-            return nextAttempt;
-        }).thenCompose(future -> future);
+                            return nextAttempt;
+                        })
+                .thenCompose(future -> future);
     }
 
     // public boolean processPayment(Order order) {
@@ -128,40 +139,37 @@ public class PaymentServiceRefactor {
 
     // Nested helper class to prevent namespace conflicts
     static interface NotificationService {
-    void sendEmail(String email, String message);
-
-}
+        void sendEmail(String email, String message);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class EmailNotificationService implements NotificationService {
-    @Override
-    public void sendEmail(String email, String message) {
-        System.out.println("Sending email to: " + email);
-        System.out.println("Message: " + message);
+        @Override
+        public void sendEmail(String email, String message) {
+            System.out.println("Sending email to: " + email);
+            System.out.println("Message: " + message);
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static interface PaymentGateway {
-    void processPayment(Order order);
-}
+        void processPayment(Order order);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class StripeGateway implements PaymentGateway {
-    @Override
-    public void processPayment(Order order) {
-        System.out.println("Connecting to Stripe...");
-        if (order.amount() > 1000) {
-            throw new RuntimeException("Gateway Timeout");
+        @Override
+        public void processPayment(Order order) {
+            System.out.println("Connecting to Stripe...");
+            if (order.amount() > 1000) {
+                throw new RuntimeException("Gateway Timeout");
+            }
+            System.out.println("Payment successful of $" + order.amount());
         }
-        System.out.println("Payment successful of $" + order.amount());
     }
-}
 
     // Nested helper class to prevent namespace conflicts
-    static record Order(double amount, String email) {
-}
-
+    static record Order(double amount, String email) {}
 }
 
 // Order class for reference

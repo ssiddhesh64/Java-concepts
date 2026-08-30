@@ -2,22 +2,19 @@ package com.example.concepts.solid;
 
 /**
  * CONCEPT TAUGHT: SOLID Decoupling, HexFormat, and Java 8 Date/Time
- * 
- * WHY THIS WAS WRITTEN:
- * - Refactors legacy registration service into a highly SRP/DIP compliant structure using modern Java 17 tools.
- * 
- * KEY LESSONS:
- * - Use interface injection for validations, repositories, and hashing.
- * - Replaced SimpleDateFormat and legacy Date with thread-safe LocalDate and Period.
- * - Use HexFormat.of().formatHex() for clean byte-to-hex formatting.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Refactors legacy registration service into a highly SRP/DIP compliant
+ * structure using modern Java 17 tools.
+ *
+ * <p>KEY LESSONS: - Use interface injection for validations, repositories, and hashing. - Replaced
+ * SimpleDateFormat and legacy Date with thread-safe LocalDate and Period. - Use
+ * HexFormat.of().formatHex() for clean byte-to-hex formatting.
  */
-import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.time.LocalDate;
-import java.util.HexFormat;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.time.LocalDate;
 import java.time.Period;
+import java.util.HexFormat;
 
 public class UserRegistrationServiceRefactor {
 
@@ -113,88 +110,84 @@ public class UserRegistrationServiceRefactor {
 
     // Nested helper class to prevent namespace conflicts
     static interface PasswordHasher {
-    String hash(String password);
-}
+        String hash(String password);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class SHA256PasswordHasher implements PasswordHasher {
-    @Override
-    public String hash(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            return HexFormat.of().formatHex(md.digest(password.getBytes(StandardCharsets.UTF_8)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        @Override
+        public String hash(String password) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                return HexFormat.of()
+                        .formatHex(md.digest(password.getBytes(StandardCharsets.UTF_8)));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static interface UserRepository {
-    void save(User user);
-}
+        void save(User user);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class SqlUserRepository implements UserRepository {
 
-    @Override
-    public void save(User user) {
-        System.out.println("Saving user to SQL database: " + user.userName());
+        @Override
+        public void save(User user) {
+            System.out.println("Saving user to SQL database: " + user.userName());
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static interface EmailService {
-    void sendWelcomeEmail(String email);
-}
+        void sendWelcomeEmail(String email);
+    }
 
     // Nested helper class to prevent namespace conflicts
     static class ConsoleEmailService implements EmailService {
-    @Override
-    public void sendWelcomeEmail(String email) {
-        System.out.println("Sending welcome email to: " + email);
+        @Override
+        public void sendWelcomeEmail(String email) {
+            System.out.println("Sending welcome email to: " + email);
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static class UserValidator {
 
-    void validateUsername(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("username cannot be empty");
-        }
-    }
-
-    void validateEmail(String email) {
-        if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("email is invalid");
-        }
-    }
-
-    void validatePassword(String password) {
-        if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("password length should be at least 8");
+        void validateUsername(String username) {
+            if (username == null || username.isBlank()) {
+                throw new IllegalArgumentException("username cannot be empty");
+            }
         }
 
-        boolean hadDigit = password.chars().anyMatch(Character::isDigit);
-        if (!hadDigit) {
-            throw new IllegalArgumentException("Password must contain at least one digit");
+        void validateEmail(String email) {
+            if (email == null || !email.contains("@")) {
+                throw new IllegalArgumentException("email is invalid");
+            }
         }
-    }
 
-    void validateAdult(LocalDate dob) {
-        int age = Period.between(dob, LocalDate.now()).getYears();
-        if (age < 18) {
-            throw new IllegalArgumentException("User must be 18 or older");
+        void validatePassword(String password) {
+            if (password == null || password.length() < 8) {
+                throw new IllegalArgumentException("password length should be at least 8");
+            }
+
+            boolean hadDigit = password.chars().anyMatch(Character::isDigit);
+            if (!hadDigit) {
+                throw new IllegalArgumentException("Password must contain at least one digit");
+            }
+        }
+
+        void validateAdult(LocalDate dob) {
+            int age = Period.between(dob, LocalDate.now()).getYears();
+            if (age < 18) {
+                throw new IllegalArgumentException("User must be 18 or older");
+            }
         }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
-    static record User(String userName,
-        String passwordHash,
-        String email,
-        LocalDate dob) {
-}
-
+    static record User(String userName, String passwordHash, String email, LocalDate dob) {}
 }

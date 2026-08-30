@@ -2,13 +2,13 @@ package com.example.concepts.concurrency;
 
 /**
  * CONCEPT TAUGHT: Scatter-Gather Concurrency Pattern
- * 
- * WHY THIS WAS WRITTEN:
- * - Demonstrates triggering multiple parallel tasks and waiting for them with a timeout.
- * 
- * KEY LESSONS:
- * - Trigger tasks in parallel (scatter), await their completion with timeout (gather), and merge results.
- * - Ensures slow external APIs do not block the thread pool indefinitely.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Demonstrates triggering multiple parallel tasks and waiting for them
+ * with a timeout.
+ *
+ * <p>KEY LESSONS: - Trigger tasks in parallel (scatter), await their completion with timeout
+ * (gather), and merge results. - Ensures slow external APIs do not block the thread pool
+ * indefinitely.
  */
 import java.util.*;
 import java.util.concurrent.*;
@@ -18,49 +18,56 @@ public class ScatterGatherChallenge {
 
     // Dummy service simulating different vendor conditions
     public static CompletableFuture<PriceDetail> fetchPrice(String productId, String vendorId) {
-        return CompletableFuture.supplyAsync(() -> {
-            if ("slow_vendor".equals(vendorId)) {
-                sleep(1500); // Exceeds individual timeout of 800ms
-            } else if ("error_vendor".equals(vendorId)) {
-                throw new RuntimeException("Vendor database offline");
-            } else {
-                sleep(200); // Fast vendor response
-            }
-            return new PriceDetail(vendorId, 99.99);
-        });
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    if ("slow_vendor".equals(vendorId)) {
+                        sleep(1500); // Exceeds individual timeout of 800ms
+                    } else if ("error_vendor".equals(vendorId)) {
+                        throw new RuntimeException("Vendor database offline");
+                    } else {
+                        sleep(200); // Fast vendor response
+                    }
+                    return new PriceDetail(vendorId, 99.99);
+                });
     }
 
     /**
      * Implement this method to:
-     * 
-     * 1. Query the price for the productId from all vendors in the list in parallel.
-     * 2. Apply an individual timeout of 800ms to each vendor query.
-     * 3. Handle errors and timeouts for each vendor query individually, making sure a failure or timeout 
-     *    in one vendor does not fail the other queries or the entire pipeline.
-     * 4. Aggregate all successful PriceDetail results into a single CompletableFuture<List<PriceDetail>>.
-     *    The resulting list must only contain non-null PriceDetails of successful queries.
-     *    If all vendors fail/timeout, it should complete with an empty list.
-     * 5. The implementation must be non-blocking (do not call `.get()` or `.join()` inside this method itself,
-     *    except inside callbacks/functions executing *after* futures have finished).
-     * 
+     *
+     * <p>1. Query the price for the productId from all vendors in the list in parallel. 2. Apply an
+     * individual timeout of 800ms to each vendor query. 3. Handle errors and timeouts for each
+     * vendor query individually, making sure a failure or timeout in one vendor does not fail the
+     * other queries or the entire pipeline. 4. Aggregate all successful PriceDetail results into a
+     * single CompletableFuture<List<PriceDetail>>. The resulting list must only contain non-null
+     * PriceDetails of successful queries. If all vendors fail/timeout, it should complete with an
+     * empty list. 5. The implementation must be non-blocking (do not call `.get()` or `.join()`
+     * inside this method itself, except inside callbacks/functions executing *after* futures have
+     * finished).
+     *
      * @param productId the product ID to fetch prices for
      * @param vendors list of vendor IDs to query
      * @return a CompletableFuture containing the list of successfully retrieved PriceDetails
      */
-    public static CompletableFuture<List<PriceDetail>> getBestPrices(String productId, List<String> vendors) {
+    public static CompletableFuture<List<PriceDetail>> getBestPrices(
+            String productId, List<String> vendors) {
         // TODO: Implement the resilient scatter-gather pattern
 
-        List<CompletableFuture<PriceDetail>> futureList = vendors.stream()
-        .map(vendorId -> fetchPrice(productId, vendorId)
-                            .orTimeout(800, TimeUnit.MILLISECONDS)
-                            .exceptionally(ex -> null))
-        .collect(Collectors.toList());
+        List<CompletableFuture<PriceDetail>> futureList =
+                vendors.stream()
+                        .map(
+                                vendorId ->
+                                        fetchPrice(productId, vendorId)
+                                                .orTimeout(800, TimeUnit.MILLISECONDS)
+                                                .exceptionally(ex -> null))
+                        .collect(Collectors.toList());
 
         return CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0]))
-        .thenApply(v -> futureList.stream()
-                            .map(CompletableFuture::join)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList()));
+                .thenApply(
+                        v ->
+                                futureList.stream()
+                                        .map(CompletableFuture::join)
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.toList()));
     }
 
     // Helper method for delay
@@ -76,7 +83,8 @@ public class ScatterGatherChallenge {
     public static void main(String[] args) {
         System.out.println("=== Starting Resilient Scatter-Gather Tests ===");
 
-        List<String> vendors = List.of("vendor_A", "slow_vendor", "vendor_B", "error_vendor", "vendor_C");
+        List<String> vendors =
+                List.of("vendor_A", "slow_vendor", "vendor_B", "error_vendor", "vendor_C");
 
         long start = System.currentTimeMillis();
         try {
@@ -102,9 +110,13 @@ public class ScatterGatherChallenge {
                 System.err.println("Got: " + prices);
             }
 
-            // Verify parallelism (should take around 800ms-1000ms, not 1500ms+ since slow_vendor timed out)
+            // Verify parallelism (should take around 800ms-1000ms, not 1500ms+ since slow_vendor
+            // timed out)
             if (duration > 1200) {
-                System.err.println("WARNING: Total duration was too long (" + duration + "ms). Are the tasks running in parallel?");
+                System.err.println(
+                        "WARNING: Total duration was too long ("
+                                + duration
+                                + "ms). Are the tasks running in parallel?");
             }
 
         } catch (Exception e) {
@@ -115,5 +127,4 @@ public class ScatterGatherChallenge {
 
     // Nested helper class to prevent namespace conflicts
     static record PriceDetail(String vendorId, double price) {}
-
 }

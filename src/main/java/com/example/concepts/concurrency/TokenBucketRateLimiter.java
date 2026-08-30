@@ -51,16 +51,14 @@ public class TokenBucketRateLimiter {
 
     private final AtomicReference<BucketState> state;
 
-    public TokenBucketRateLimiter(long capacity,
-            long refillIntervalMillis) {
+    public TokenBucketRateLimiter(long capacity, long refillIntervalMillis) {
 
         this.capacity = capacity;
         this.refillIntervalNanos = refillIntervalMillis * 1_000_000L;
 
         long now = System.nanoTime();
 
-        this.state = new AtomicReference<>(
-                new BucketState(capacity, now));
+        this.state = new AtomicReference<>(new BucketState(capacity, now));
     }
 
     public boolean allowRequest() {
@@ -75,21 +73,16 @@ public class TokenBucketRateLimiter {
 
             long tokensToAdd = elapsed / refillIntervalNanos;
 
-            long newTokens = Math.min(
-                    capacity,
-                    current.availableTokens + tokensToAdd);
+            long newTokens = Math.min(capacity, current.availableTokens + tokensToAdd);
 
             // Preserve fractional elapsed time
-            long newRefillTime = current.lastRefillTimeNanos
-                    + tokensToAdd * refillIntervalNanos;
+            long newRefillTime = current.lastRefillTimeNanos + tokensToAdd * refillIntervalNanos;
 
             if (newTokens == 0) {
                 return false;
             }
 
-            BucketState updated = new BucketState(
-                    newTokens - 1,
-                    newRefillTime);
+            BucketState updated = new BucketState(newTokens - 1, newRefillTime);
 
             if (state.compareAndSet(current, updated)) {
                 return true;
@@ -99,5 +92,4 @@ public class TokenBucketRateLimiter {
             // retry
         }
     }
-
 }

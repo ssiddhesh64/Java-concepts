@@ -19,9 +19,7 @@ public class ParallelDataScraper {
 
     private String fetchData(String url) {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             // Blocking HTTP Call
             return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         } catch (Exception e) {
@@ -30,27 +28,29 @@ public class ParallelDataScraper {
     }
 
     public void scrapeUrlsAsync(List<String> urls) {
-        List<CompletableFuture<Void>> futures = urls.stream() // No need for parallelStream now!
-                .map(url -> fetchDataAsync(url)
-                        .thenAccept(System.out::println)
-                        .exceptionally(ex -> {
-                            System.out.println("Failed to fetch: " + url);
-                            return null;
-                        }))
-                .toList(); // Terminal operation triggers stream execution!
+        List<CompletableFuture<Void>> futures =
+                urls.stream() // No need for parallelStream now!
+                        .map(
+                                url ->
+                                        fetchDataAsync(url)
+                                                .thenAccept(System.out::println)
+                                                .exceptionally(
+                                                        ex -> {
+                                                            System.out.println(
+                                                                    "Failed to fetch: " + url);
+                                                            return null;
+                                                        }))
+                        .toList(); // Terminal operation triggers stream execution!
 
         // Wait for all HTTP requests to complete asynchronously
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
     private CompletableFuture<String> fetchDataAsync(String url) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
         // Native, non-blocking asynchronous call!
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body);
     }
-
 }

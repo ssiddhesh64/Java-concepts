@@ -1,19 +1,19 @@
 package com.example.concepts.concurrency;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 public class SimpleCircuitBreaker {
     // private String state = "CLOSED"; // CLOSED, OPEN, HALF_OPEN
     // private int failureCount = 0;
-    private final int failureThreshold = 3;
-    private final long retryTimeoutMs = 5000;
+    private static final int failureThreshold = 3;
+    private static final long retryTimeoutMs = 5000;
     // private long lastFailureTime = 0;
 
-    private AtomicReference<State> state = new AtomicReference<>(State.CLOSED); // CLOSED, OPEN, HALF_OPEN
+    private AtomicReference<State> state =
+            new AtomicReference<>(State.CLOSED); // CLOSED, OPEN, HALF_OPEN
     private final AtomicInteger failureCount = new AtomicInteger(0);
     private final AtomicLong lastFailureTime = new AtomicLong(0L);
 
@@ -55,7 +55,9 @@ public class SimpleCircuitBreaker {
         State currState = state.get();
         if (currState == State.OPEN) {
             if (System.currentTimeMillis() - lastFailureTime.get() > retryTimeoutMs) {
-                if (!state.compareAndSet(State.OPEN, State.HALF_OPEN)) {
+                if (state.compareAndSet(State.OPEN, State.HALF_OPEN)) {
+                    currState = State.HALF_OPEN;
+                } else {
                     throw new RuntimeException("Another thread is already probing");
                 }
             } else {
@@ -91,9 +93,8 @@ public class SimpleCircuitBreaker {
 
     // Nested helper class to prevent namespace conflicts
     static enum State {
-    OPEN,
-    HALF_OPEN,
-    CLOSED;
-}
-
+        OPEN,
+        HALF_OPEN,
+        CLOSED;
+    }
 }

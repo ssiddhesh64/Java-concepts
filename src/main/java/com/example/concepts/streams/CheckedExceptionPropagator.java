@@ -2,13 +2,13 @@ package com.example.concepts.streams;
 
 /**
  * CONCEPT TAUGHT: Checked Exception Propagation in Streams
- * 
- * WHY THIS WAS WRITTEN:
- * - Solves the limitation where Stream lambda expressions cannot throw checked exceptions by wrapping and unwrapping exceptions.
- * 
- * KEY LESSONS:
- * - Checked exceptions inside streams must be wrapped in an unchecked exception (like a custom RuntimeException).
- * - Catch the wrapper exception outside the stream pipeline and unwrap/rethrow the original checked exception.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Solves the limitation where Stream lambda expressions cannot throw
+ * checked exceptions by wrapping and unwrapping exceptions.
+ *
+ * <p>KEY LESSONS: - Checked exceptions inside streams must be wrapped in an unchecked exception
+ * (like a custom RuntimeException). - Catch the wrapper exception outside the stream pipeline and
+ * unwrap/rethrow the original checked exception.
  */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,63 +46,69 @@ public class CheckedExceptionPropagator {
     }
 
     /**
-     * Requirement 1:
-     * Map the items using the throwing mapper. If any item throws the checked exception E, 
-     * immediately abort the stream execution and throw that checked exception E to the caller.
-     * 
-     * Rules:
-     * - Unchecked exceptions (RuntimeException) thrown by the mapper should be propagated as-is
-     *   without being wrapped in E.
-     * - The method signature correctly declares `throws E`.
+     * Requirement 1: Map the items using the throwing mapper. If any item throws the checked
+     * exception E, immediately abort the stream execution and throw that checked exception E to the
+     * caller.
+     *
+     * <p>Rules: - Unchecked exceptions (RuntimeException) thrown by the mapper should be propagated
+     * as-is without being wrapped in E. - The method signature correctly declares `throws E`.
      */
     public static <T, R, E extends Exception> List<R> mapAndCollect(
-            Collection<T> items, 
-            ThrowingFunction<T, R, E> mapper) throws E {
+            Collection<T> items, ThrowingFunction<T, R, E> mapper) throws E {
         // TODO: Implement stream mapping and exception propagation
         try {
-            return items.stream().map((item) -> {
-                try {
-                    return mapper.apply(item);
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new WrappedException(e);
-                }
-            }).collect(Collectors.toList());
+            return items.stream()
+                    .map(
+                            (item) -> {
+                                try {
+                                    return mapper.apply(item);
+                                } catch (RuntimeException e) {
+                                    throw e;
+                                } catch (Exception e) {
+                                    throw new WrappedException(e);
+                                }
+                            })
+                    .collect(Collectors.toList());
         } catch (WrappedException e) {
-            @SuppressWarnings("unchecked")
-            E cause = (E) e.getCause();
-            throw cause;
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                @SuppressWarnings("unchecked")
+                E casted = (E) cause;
+                throw casted;
+            }
+            throw e;
         }
     }
 
     /**
-     * Requirement 2:
-     * Run the consumer over the items. If any item throws the checked exception E, 
+     * Requirement 2: Run the consumer over the items. If any item throws the checked exception E,
      * immediately abort the loop execution and throw that checked exception E to the caller.
-     * 
-     * Rules:
-     * - Unchecked exceptions (RuntimeException) thrown by the consumer should be propagated as-is.
-     * - The method signature correctly declares `throws E`.
+     *
+     * <p>Rules: - Unchecked exceptions (RuntimeException) thrown by the consumer should be
+     * propagated as-is. - The method signature correctly declares `throws E`.
      */
     public static <T, E extends Exception> void forEachWithException(
-            Collection<T> items, 
-            ThrowingConsumer<T, E> consumer) throws E {
+            Collection<T> items, ThrowingConsumer<T, E> consumer) throws E {
         // TODO: Implement exception-aware forEach
         try {
-            items.forEach((item) -> {
-                try {
-                    consumer.accept(item);
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch(Exception e) {
-                    throw new WrappedException(e);
-                }
-            });
+            items.forEach(
+                    (item) -> {
+                        try {
+                            consumer.accept(item);
+                        } catch (RuntimeException e) {
+                            throw e;
+                        } catch (Exception e) {
+                            throw new WrappedException(e);
+                        }
+                    });
         } catch (WrappedException e) {
-            @SuppressWarnings("unchecked")
-            E cause = (E) e.getCause();
-            throw cause;
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                @SuppressWarnings("unchecked")
+                E casted = (E) cause;
+                throw casted;
+            }
+            throw e;
         }
     }
 
@@ -115,9 +121,11 @@ public class CheckedExceptionPropagator {
         // Test 1: Map and Collect - Checked Exception Catching
         System.out.println("\n--- Test 1: Map and Collect (Checked Exception Catching) ---");
         try {
-            // Note how the compiler permits catching ParseException directly because mapAndCollect declares throws E!
+            // Note how the compiler permits catching ParseException directly because mapAndCollect
+            // declares throws E!
             List<Date> results = mapAndCollect(dates, CheckedExceptionPropagator::parseDate);
-            System.err.println("Test 1 Failed: Expected ParseException but succeeded. Results: " + results);
+            System.err.println(
+                    "Test 1 Failed: Expected ParseException but succeeded. Results: " + results);
         } catch (ParseException e) {
             System.out.println("SUCCESS: Caught raw checked ParseException directly!");
         } catch (Exception e) {
@@ -133,19 +141,22 @@ public class CheckedExceptionPropagator {
         } catch (NullPointerException e) {
             System.out.println("SUCCESS: NullPointerException propagated without wrapping!");
         } catch (Throwable t) {
-            System.err.println("FAILURE: Expected NullPointerException but got: " + t.getClass().getName());
+            System.err.println(
+                    "FAILURE: Expected NullPointerException but got: " + t.getClass().getName());
         }
 
         // Test 3: forEachWithException
         System.out.println("\n--- Test 3: forEachWithException ---");
         List<String> testFiles = List.of("fileA.txt", "error_file.txt", "fileB.txt");
         try {
-            forEachWithException(testFiles, filename -> {
-                if ("error_file.txt".equals(filename)) {
-                    throw new java.io.IOException("Disk read error for " + filename);
-                }
-                System.out.println("Processed: " + filename);
-            });
+            forEachWithException(
+                    testFiles,
+                    filename -> {
+                        if ("error_file.txt".equals(filename)) {
+                            throw new java.io.IOException("Disk read error for " + filename);
+                        }
+                        System.out.println("Processed: " + filename);
+                    });
             System.err.println("Test 3 Failed: Expected IOException but succeeded.");
         } catch (java.io.IOException e) {
             System.out.println("SUCCESS: Caught checked IOException from consumer loop!");
@@ -153,5 +164,4 @@ public class CheckedExceptionPropagator {
             System.err.println("FAILURE: Caught wrong exception type: " + e.getClass().getName());
         }
     }
-
 }

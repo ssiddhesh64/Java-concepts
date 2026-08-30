@@ -2,13 +2,13 @@ package com.example.concepts.solid;
 
 /**
  * CONCEPT TAUGHT: Custom Reflection-Based DI Container
- * 
- * WHY THIS WAS WRITTEN:
- * - Demonstrates the core mechanics of Dependency Injection using Java Reflection and custom annotations.
- * 
- * KEY LESSONS:
- * - Reflection allows scanning classes for custom annotations (like @Component, @Autowired).
- * - A simple DI container manages the lifecycle and wiring of singleton instances.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Demonstrates the core mechanics of Dependency Injection using Java
+ * Reflection and custom annotations.
+ *
+ * <p>KEY LESSONS: - Reflection allows scanning classes for custom annotations
+ * (like @Component, @Autowired). - A simple DI container manages the lifecycle and wiring of
+ * singleton instances.
  */
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
@@ -30,38 +30,38 @@ public class DependencyInjectionChallenge {
 
         /**
          * Implement this method to build a lightweight DI container:
-         * 
-         * 1. Validation: Verify that all registered classes in `registeredClasses` are 
-         *    annotated with `@Component`. If any class is not, throw an 
-         *    `IllegalArgumentException("Class must be annotated with @Component")`.
-         * 2. Instantiation: Create a new instance of each registered class using its default constructor, 
-         *    and store it in the `beans` map mapping Class to Instance.
-         * 3. Injection: For each instantiated bean, search all of its declared fields 
-         *    for the `@Autowired` annotation.
-         * 4. Resolution: For each `@Autowired` field, locate the dependency bean in your `beans` map.
-         *    - If a matching bean of the correct type is found, set it in the field using reflection.
-         *    - If no matching bean is found, throw a `NoSuchElementException("No dependency found of type...")`.
-         * 
+         *
+         * <p>1. Validation: Verify that all registered classes in `registeredClasses` are annotated
+         * with `@Component`. If any class is not, throw an `IllegalArgumentException("Class must be
+         * annotated with @Component")`. 2. Instantiation: Create a new instance of each registered
+         * class using its default constructor, and store it in the `beans` map mapping Class to
+         * Instance. 3. Injection: For each instantiated bean, search all of its declared fields for
+         * the `@Autowired` annotation. 4. Resolution: For each `@Autowired` field, locate the
+         * dependency bean in your `beans` map. - If a matching bean of the correct type is found,
+         * set it in the field using reflection. - If no matching bean is found, throw a
+         * `NoSuchElementException("No dependency found of type...")`.
+         *
          * @throws Exception if instantiation or field injection fails
          */
         public void instantiateAndInject() throws Exception {
             // TODO: Implement the DI container lifecycle
-            for(Class<?> clazz : registeredClasses) {
-                if(!clazz.isAnnotationPresent(Component.class)) {
+            for (Class<?> clazz : registeredClasses) {
+                if (!clazz.isAnnotationPresent(Component.class)) {
                     throw new IllegalArgumentException("Class must be annotated with @Component");
                 }
                 beans.put(clazz, clazz.getDeclaredConstructor().newInstance());
             }
 
-            for(Class<?> clazz : registeredClasses) {
+            for (Class<?> clazz : registeredClasses) {
                 Object instance = beans.get(clazz);
                 Field[] fields = clazz.getDeclaredFields();
-                for(Field field : fields) {
-                    if(field.isAnnotationPresent(Autowired.class)) {
+                for (Field field : fields) {
+                    if (field.isAnnotationPresent(Autowired.class)) {
                         Class<?> fieldType = field.getType();
                         Object dependency = beans.get(fieldType);
-                        if(dependency == null) {
-                            throw new NoSuchElementException("No dependency found of type " + fieldType.getName());
+                        if (dependency == null) {
+                            throw new NoSuchElementException(
+                                    "No dependency found of type " + fieldType.getName());
                         }
                         field.setAccessible(true);
                         field.set(instance, dependency);
@@ -106,7 +106,8 @@ public class DependencyInjectionChallenge {
             DiContainer container = new DiContainer();
             container.register(UnmanagedClass.class);
             container.instantiateAndInject();
-            System.err.println("Test 2 Failed: Expected IllegalArgumentException but completed successfully");
+            System.err.println(
+                    "Test 2 Failed: Expected IllegalArgumentException but completed successfully");
         } catch (IllegalArgumentException e) {
             System.out.println("Caught Expected Exception: " + e.getMessage());
             System.out.println("SUCCESS");
@@ -121,7 +122,8 @@ public class DependencyInjectionChallenge {
             container.register(OrderService.class);
             // Missing DatabaseConnection and PaymentService registration
             container.instantiateAndInject();
-            System.err.println("Test 3 Failed: Expected NoSuchElementException but completed successfully");
+            System.err.println(
+                    "Test 3 Failed: Expected NoSuchElementException but completed successfully");
         } catch (NoSuchElementException e) {
             System.out.println("Caught Expected Exception: " + e.getMessage());
             System.out.println("SUCCESS");
@@ -132,48 +134,45 @@ public class DependencyInjectionChallenge {
 
     // Nested helper class to prevent namespace conflicts
     // Custom Annotations
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-static @interface Component {}
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    static @interface Component {}
 
     // Nested helper class to prevent namespace conflicts
     @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-static @interface Autowired {}
+    @Target(ElementType.FIELD)
+    static @interface Autowired {}
 
     // Nested helper class to prevent namespace conflicts
     // Managed Components
-@Component
-static class DatabaseConnection {
-    public String query() {
-        return "Database Query Result";
+    @Component
+    static class DatabaseConnection {
+        public String query() {
+            return "Database Query Result";
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     @Component
-static class PaymentService {
-    @Autowired
-    private DatabaseConnection db;
+    static class PaymentService {
+        @Autowired private DatabaseConnection db;
 
-    public String processPayment() {
-        return "Payment processed. DB query: " + db.query();
+        public String processPayment() {
+            return "Payment processed. DB query: " + db.query();
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     @Component
-static class OrderService {
-    @Autowired
-    private PaymentService paymentService;
+    static class OrderService {
+        @Autowired private PaymentService paymentService;
 
-    public String placeOrder() {
-        return "Order Placed. " + paymentService.processPayment();
+        public String placeOrder() {
+            return "Order Placed. " + paymentService.processPayment();
+        }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     // Unannotated static class for testing validation
-static class UnmanagedClass {}
-
+    static class UnmanagedClass {}
 }

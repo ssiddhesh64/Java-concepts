@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude unread fields in DTOs and test classes (read via reflection) -->
+    <Match>
+        <Bug pattern="URF_UNREAD_FIELD,UWF_UNREAD_FIELD,UUF_UNUSED_FIELD"/>
+    </Match>
+
+    <!-- Exclude exposing internal representation (common in simple DTOs) -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Exclude dead local stores in main/test scripts -->
+    <Match>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+
+    <!-- Exclude catching Exception in reflection and main methods -->
+    <Match>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
+
+    <!-- Exclude setAccessible without doPrivileged -->
+    <Match>
+        <Bug pattern="DP_DO_INSIDE_DO_PRIVILEGED"/>
+    </Match>
+
+    <!-- Exclude constructor throws warning and static-only class instantiation warnings -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW,ISC_INSTANTIATE_STATIC_CLASS"/>
+    </Match>
+
+    <!-- Exclude package protection warnings for static arrays in demo code -->
+    <Match>
+        <Bug pattern="MS_PKGPROTECT,MS_MUTABLE_ARRAY"/>
+    </Match>
+
+    <!-- Exclude ignored return value of Futures in threads -->
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE,RV_RETURN_VALUE_IGNORED"/>
+    </Match>
+
+    <!-- Exclude converting case without locale -->
+    <Match>
+        <Bug pattern="DM_CONVERT_CASE"/>
+    </Match>
+
+    <!-- Exclude useless void method in demo main classes -->
+    <Match>
+        <Bug pattern="UC_USELESS_VOID_METHOD"/>
+    </Match>
+
+    <!-- Exclude catching NPE in checked exception exercises -->
+    <Match>
+        <Bug pattern="DCN_NULLPOINTER_EXCEPTION"/>
+    </Match>
+</FindBugsFilter>

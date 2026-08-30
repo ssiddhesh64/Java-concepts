@@ -18,16 +18,18 @@ public class NestedTaskProcessor {
         List<Future<Void>> parentFutures = new ArrayList<>();
 
         for (String item : items) {
-            parentFutures.add(pool.submit(() -> {
-                // Subtask submitted to the SAME pool
-                Future<String> subTaskFuture = pool.submit(() -> subProcess(item));
+            parentFutures.add(
+                    pool.submit(
+                            () -> {
+                                // Subtask submitted to the SAME pool
+                                Future<String> subTaskFuture = pool.submit(() -> subProcess(item));
 
-                // Blocks the parent thread waiting for the subtask to execute
-                String result = subTaskFuture.get();
+                                // Blocks the parent thread waiting for the subtask to execute
+                                String result = subTaskFuture.get();
 
-                System.out.println("Finished: " + result);
-                return null;
-            }));
+                                System.out.println("Finished: " + result);
+                                return null;
+                            }));
         }
 
         // Wait for all parent tasks to complete
@@ -40,10 +42,16 @@ public class NestedTaskProcessor {
 
     // Better way
     public CompletableFuture<Void> processAllAsync(List<String> items) {
-        List<CompletableFuture<Void>> futures = items.stream()
-                .map(item -> CompletableFuture.supplyAsync(() -> subProcess(item), pool)
-                        .thenAccept(result -> System.out.println("Finished: " + result)))
-                .toList();
+        List<CompletableFuture<Void>> futures =
+                items.stream()
+                        .map(
+                                item ->
+                                        CompletableFuture.supplyAsync(() -> subProcess(item), pool)
+                                                .thenAccept(
+                                                        result ->
+                                                                System.out.println(
+                                                                        "Finished: " + result)))
+                        .toList();
 
         // No threads are blocked waiting. Everything is event-driven.
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
@@ -66,7 +74,5 @@ public class NestedTaskProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 }

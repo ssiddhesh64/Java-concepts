@@ -2,13 +2,13 @@ package com.example.concepts.streams;
 
 /**
  * CONCEPT TAUGHT: Partitioning Successes and Failures in Streams
- * 
- * WHY THIS WAS WRITTEN:
- * - Creates a custom Collector that collects exceptions and successful values separately rather than aborting.
- * 
- * KEY LESSONS:
- * - A custom collector can collect stream processing side effects (exceptions) into a container class.
- * - This keeps the stream resilient, processing all elements and returning successes and failures separately.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Creates a custom Collector that collects exceptions and successful
+ * values separately rather than aborting.
+ *
+ * <p>KEY LESSONS: - A custom collector can collect stream processing side effects (exceptions) into
+ * a container class. - This keeps the stream resilient, processing all elements and returning
+ * successes and failures separately.
  */
 import java.io.IOException;
 import java.net.URI;
@@ -26,9 +26,7 @@ public class ResilientStreamCollector {
         R apply(T t) throws E;
     }
 
-    /**
-     * Container to hold partitioned results of successes and exceptions.
-     */
+    /** Container to hold partitioned results of successes and exceptions. */
     public static class StreamPartitionResult<R> {
         private final List<R> successes = new ArrayList<>();
         private final List<Throwable> failures = new ArrayList<>();
@@ -43,10 +41,12 @@ public class ResilientStreamCollector {
 
         @Override
         public String toString() {
-            return "StreamPartitionResult{" +
-                    "successes=" + successes +
-                    ", failures=" + failures.stream().map(Throwable::getMessage).collect(Collectors.toList()) +
-                    '}';
+            return "StreamPartitionResult{"
+                    + "successes="
+                    + successes
+                    + ", failures="
+                    + failures.stream().map(Throwable::getMessage).collect(Collectors.toList())
+                    + '}';
         }
     }
 
@@ -63,34 +63,34 @@ public class ResilientStreamCollector {
 
     /**
      * Implement this method to create a custom Collector:
-     * 
-     * 1. The collector should map each input element using the provided `mapper`.
-     * 2. If mapping succeeds, the resulting value should be added to the `successes` list.
-     * 3. If mapping throws any Exception (including checked exceptions), the exception should 
-     *    be caught and added to the `failures` list.
-     * 4. The collector must be thread-safe for parallel stream processing (implement the combiner).
-     * 
+     *
+     * <p>1. The collector should map each input element using the provided `mapper`. 2. If mapping
+     * succeeds, the resulting value should be added to the `successes` list. 3. If mapping throws
+     * any Exception (including checked exceptions), the exception should be caught and added to the
+     * `failures` list. 4. The collector must be thread-safe for parallel stream processing
+     * (implement the combiner).
+     *
      * @param mapper throwing mapping function
      * @return a custom Collector accumulating elements into StreamPartitionResult
      */
     public static <T, R> Collector<T, ?, StreamPartitionResult<R>> partitioningCollector(
             ThrowingFunction<T, R, ?> mapper) {
         // TODO: Implement the custom partitioning collector using Collector.of()
-        return Collector.of(StreamPartitionResult<R>::new,
-            (result, element) -> {
-                try {
-                    R value = mapper.apply(element);
-                    result.getSuccesses().add(value);
-                } catch (Exception e) {
-                    result.getFailures().add(e);
-                }
-            },
-            (res1, res2) -> {
-                res1.getSuccesses().addAll(res2.getSuccesses());
-                res1.getFailures().addAll(res2.getFailures());
-                return res1;
-            }
-        );
+        return Collector.of(
+                StreamPartitionResult<R>::new,
+                (result, element) -> {
+                    try {
+                        R value = mapper.apply(element);
+                        result.getSuccesses().add(value);
+                    } catch (Exception e) {
+                        result.getFailures().add(e);
+                    }
+                },
+                (res1, res2) -> {
+                    res1.getSuccesses().addAll(res2.getSuccesses());
+                    res1.getFailures().addAll(res2.getFailures());
+                    return res1;
+                });
     }
 
     // @FunctionalInterface
@@ -98,8 +98,7 @@ public class ResilientStreamCollector {
     //     R apply(T t) throws E;
     // }
 
-    static <T, R, E extends Exception>
-    Function<T, R> wrap (ThrowingFunction<T, R, E> fn) {
+    static <T, R, E extends Exception> Function<T, R> wrap(ThrowingFunction<T, R, E> fn) {
         return t -> {
             try {
                 return fn.apply(t);
@@ -110,9 +109,7 @@ public class ResilientStreamCollector {
     }
 
     public static List<URI> parseUris(List<String> uriStrings) {
-        return uriStrings.stream()
-        .map(wrap(URI::new))
-        .toList();
+        return uriStrings.stream().map(wrap(URI::new)).toList();
     }
 
     // Test Harness
@@ -122,8 +119,9 @@ public class ResilientStreamCollector {
         List<String> filesToRead = List.of("file1.txt", "missing.txt", "file2.txt", "corrupt.txt");
 
         // Execute streaming pipeline using your custom collector
-        StreamPartitionResult<String> result = filesToRead.stream()
-                .collect(partitioningCollector(ResilientStreamCollector::readFile));
+        StreamPartitionResult<String> result =
+                filesToRead.stream()
+                        .collect(partitioningCollector(ResilientStreamCollector::readFile));
 
         System.out.println("\nCollector Output: " + result);
 
@@ -132,12 +130,15 @@ public class ResilientStreamCollector {
         List<Throwable> failures = result.getFailures();
 
         boolean checkSuccessCount = successes.size() == 2;
-        boolean checkSuccessValues = successes.contains("Hello from File 1") && successes.contains("Welcome to File 2");
+        boolean checkSuccessValues =
+                successes.contains("Hello from File 1") && successes.contains("Welcome to File 2");
         boolean checkFailureCount = failures.size() == 2;
-        boolean checkFailureTypes = failures.stream().allMatch(t -> t instanceof NoSuchFileException);
+        boolean checkFailureTypes =
+                failures.stream().allMatch(t -> t instanceof NoSuchFileException);
 
         if (checkSuccessCount && checkSuccessValues && checkFailureCount && checkFailureTypes) {
-            System.out.println("\nSUCCESS: Resilient partitioning collector implemented perfectly!");
+            System.out.println(
+                    "\nSUCCESS: Resilient partitioning collector implemented perfectly!");
         } else {
             System.err.println("\nFAILURE: Verification failed.");
             System.err.println("  Success count == 2: " + checkSuccessCount);
@@ -146,5 +147,4 @@ public class ResilientStreamCollector {
             System.err.println("  Failures are NoSuchFileException: " + checkFailureTypes);
         }
     }
-
 }

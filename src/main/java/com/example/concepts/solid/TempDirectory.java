@@ -2,13 +2,12 @@ package com.example.concepts.solid;
 
 /**
  * CONCEPT TAUGHT: JVM Shutdown Hooks for Resource Cleanup
- * 
- * WHY THIS WAS WRITTEN:
- * - Demonstrates how to clean up temporary directory structures automatically when the JVM exits.
- * 
- * KEY LESSONS:
- * - Runtime.getRuntime().addShutdownHook() registers cleanup actions.
- * - Shutdown hooks must be thread-safe and handle exceptions gracefully.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Demonstrates how to clean up temporary directory structures
+ * automatically when the JVM exits.
+ *
+ * <p>KEY LESSONS: - Runtime.getRuntime().addShutdownHook() registers cleanup actions. - Shutdown
+ * hooks must be thread-safe and handle exceptions gracefully.
  */
 import java.io.IOException;
 import java.nio.file.*;
@@ -32,65 +31,57 @@ public class TempDirectory implements AutoCloseable {
             deleteRecursively(path);
         } catch (IOException e) {
             throw new DirectoryCleanupException(
-                    "Failed to cleanup temporary directory: " + path,
-                    e
-            );
+                    "Failed to cleanup temporary directory: " + path, e);
         }
     }
 
-    private static void deleteRecursively(Path root)
-            throws IOException {
+    private static void deleteRecursively(Path root) throws IOException {
 
         if (root == null || !Files.exists(root)) {
             return;
         }
 
-        Files.walkFileTree(root, new SimpleFileVisitor<>() {
+        Files.walkFileTree(
+                root,
+                new SimpleFileVisitor<>() {
 
-            @Override
-            public FileVisitResult visitFile(
-                    Path file,
-                    BasicFileAttributes attrs)
-                    throws IOException {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
 
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(
-                    Path dir,
-                    IOException exc)
-                    throws IOException {
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                            throws IOException {
 
-                if (exc != null) {
-                    throw exc;
-                }
+                        if (exc != null) {
+                            throw exc;
+                        }
 
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult visitFileFailed(
-                    Path file,
-                    IOException exc)
-                    throws IOException {
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc)
+                            throws IOException {
 
-                throw exc;
-            }
-        });
+                        throw exc;
+                    }
+                });
     }
 
     // Nested helper class to prevent namespace conflicts
     static class DirectoryCleanupException extends RuntimeException {
-    DirectoryCleanupException(String message) {
-        super(message);
-    }
+        DirectoryCleanupException(String message) {
+            super(message);
+        }
 
-    DirectoryCleanupException(String message, Throwable cause) {
-        super(message, cause);
+        DirectoryCleanupException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
-}
-
 }

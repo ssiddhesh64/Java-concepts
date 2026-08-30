@@ -103,16 +103,31 @@ Below is a complete index of all educational files in this repository, mapped to
 
 ---
 
-## 🛠️ How to Compile and Run
+## 🛠️ How to Compile, Format, and Verify
 
-Because all files reside in the default package, compiling them all together (e.g., `javac *.java`) will trigger duplicate class errors due to shared names (e.g., `Employee`, `User`).
+This repository is structured as a standard Maven project. All educational source files reside in logical package folders under `com.example.concepts.*`. 
 
-To compile and run files **individually**:
+Instead of manual compiler commands, you can manage the repository lifecycle using the provided **Maven Wrapper**:
 
+### 1. Run the Verification Pipeline
+To compile the codebase, execute Spotless formatting validation, run Spotbugs static analysis, and run the automated test suite, use the standard verification command:
 ```bash
-# Compile a specific file
-javac Streams.java
-
-# Run the compiled class
-java Streams
+./mvnw clean verify
 ```
+
+### 2. Auto-Format Code
+To automatically format the entire codebase to the industry-standard Google Java Format, run:
+```bash
+./mvnw spotless:apply
+```
+
+### 3. Run Unit Tests Only
+A robust unit test suite built with **JUnit 5**, **AssertJ**, and **Mockito** is provided in `src/test/java` to verify concurrency, stream lifecycles, and SOLID implementations. To run only the tests:
+```bash
+./mvnw test
+```
+
+---
+
+## 🚀 Continuous Integration (CI/CD)
+The project includes a **GitHub Actions CI/CD workflow** (`.github/workflows/maven.yml`) that automatically runs `./mvnw clean verify` on every push and pull request. This ensures that the codebase remains fully functional, beautifully formatted, and free of static analysis bugs.

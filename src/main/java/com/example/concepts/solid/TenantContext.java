@@ -13,14 +13,14 @@ public class TenantContext {
     }
 
     public static void main(String[] args) {
-        Runnable task = () -> {
-            try (AutoCloseable ctx = TenantContext.setTenantId("tenant-123")) {
-                System.out.println("Current Tenant ID: " + TenantContext.getTenantId());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
+        Runnable task =
+                () -> {
+                    try (AutoCloseable ctx = TenantContext.setTenantId("tenant-123")) {
+                        System.out.println("Current Tenant ID: " + TenantContext.getTenantId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                };
         task.run();
     }
-
 }

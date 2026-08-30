@@ -1,11 +1,11 @@
 package com.example.concepts.concurrency;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 public class MemoizerCache<K, V> {
     // private final Map<K, V> cache = new ConcurrentHashMap<>();
@@ -19,10 +19,12 @@ public class MemoizerCache<K, V> {
     // High contention / Cache Stampede under load!
     public V get(K key, Function<K, V> computeFunction) {
         // V value = cache.get(key);
-        CompletableFuture<V> future = cache
-                .computeIfAbsent(key, k -> CompletableFuture.supplyAsync(
-                        () -> computeFunction.apply(k),
-                        executor));
+        CompletableFuture<V> future =
+                cache.computeIfAbsent(
+                        key,
+                        k ->
+                                CompletableFuture.supplyAsync(
+                                        () -> computeFunction.apply(k), executor));
 
         try {
             return future.join();
@@ -39,5 +41,4 @@ public class MemoizerCache<K, V> {
         // }
         // return value;
     }
-
 }

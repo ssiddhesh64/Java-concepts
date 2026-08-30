@@ -55,5 +55,4 @@ public class SimpleConcurrentStack<T> {
             this.value = value;
         }
     }
-
 }

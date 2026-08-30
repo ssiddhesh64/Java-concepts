@@ -2,14 +2,13 @@ package com.example.concepts.concurrency;
 
 /**
  * CONCEPT TAUGHT: ExecutorService vs. Manual Threads
- * 
- * WHY THIS WAS WRITTEN:
- * - Refactors manual thread creation inside a loop into a clean, pool-backed parallel processor using CompletableFuture.
- * 
- * KEY LESSONS:
- * - Creating threads manually in a loop is an anti-pattern that leads to resource starvation.
- * - Use a dedicated ExecutorService to control thread counts and recycle threads.
- * - Streams are lazy and require a terminal operation (like .toList()) to trigger execution.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Refactors manual thread creation inside a loop into a clean,
+ * pool-backed parallel processor using CompletableFuture.
+ *
+ * <p>KEY LESSONS: - Creating threads manually in a loop is an anti-pattern that leads to resource
+ * starvation. - Use a dedicated ExecutorService to control thread counts and recycle threads. -
+ * Streams are lazy and require a terminal operation (like .toList()) to trigger execution.
  */
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -49,8 +48,7 @@ public class ConcurrentDataProcessor<T> {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
-    public ConcurrentDataProcessor(
-            StorageProcessor<T> storageProcessor) {
+    public ConcurrentDataProcessor(StorageProcessor<T> storageProcessor) {
         this.storageProcessor = storageProcessor;
     }
 
@@ -58,11 +56,13 @@ public class ConcurrentDataProcessor<T> {
 
         List<T> snapshot = storageProcessor.snapshot();
 
-        CompletableFuture<?>[] cfs = snapshot.stream()
-                .map(item -> CompletableFuture.runAsync(
-                        () -> processItem(item),
-                        executorService))
-                .toArray(CompletableFuture[]::new);
+        CompletableFuture<?>[] cfs =
+                snapshot.stream()
+                        .map(
+                                item ->
+                                        CompletableFuture.runAsync(
+                                                () -> processItem(item), executorService))
+                        .toArray(CompletableFuture[]::new);
 
         return CompletableFuture.allOf(cfs);
     }
@@ -84,86 +84,93 @@ public class ConcurrentDataProcessor<T> {
     // Nested helper class to prevent namespace conflicts
     static class StorageProcessor<T> {
 
-    private final List<T> data = Collections.synchronizedList(new ArrayList<>());
+        private final List<T> data = Collections.synchronizedList(new ArrayList<>());
 
-    public void addData(T item) {
-        data.add(item);
-    }
+        public void addData(T item) {
+            data.add(item);
+        }
 
-    public List<T> snapshot() {
-        synchronized (data) {
-            return new ArrayList<>(data);
+        public List<T> snapshot() {
+            synchronized (data) {
+                return new ArrayList<>(data);
+            }
         }
     }
-}
 
     // Nested helper class to prevent namespace conflicts
     static class ConcurrentDataProcessor2 {
-    private final List<String> dataList = Collections.synchronizedList(new ArrayList<>());
+        private final List<String> dataList = Collections.synchronizedList(new ArrayList<>());
 
-    // Dedicated executor for I/O / heavy operations
-    private final ExecutorService executor = Executors.newFixedThreadPool(
-            Runtime.getRuntime().availableProcessors() * 2);
+        // Dedicated executor for I/O / heavy operations
+        private final ExecutorService executor =
+                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
-    public CompletableFuture<Void> processData(List<String> rawData) {
+        public CompletableFuture<Void> processData(List<String> rawData) {
 
-        if (rawData == null)
-            return CompletableFuture.completedFuture(null);
+            if (rawData == null) return CompletableFuture.completedFuture(null);
 
-        List<String> snapshot;
-        synchronized (rawData) {
-            snapshot = new ArrayList<>(rawData);
+            List<String> snapshot;
+            synchronized (rawData) {
+                snapshot = new ArrayList<>(rawData);
+            }
+
+            List<CompletableFuture<Void>> futures =
+                    snapshot.stream()
+                            .map(
+                                    data ->
+                                            CompletableFuture.runAsync(
+                                                            () -> {
+                                                                String processed =
+                                                                        heavyTransformation(data);
+                                                                dataList.add(processed);
+                                                            },
+                                                            executor)
+                                                    .exceptionally(
+                                                            ex -> {
+                                                                // throw new
+                                                                // RuntimeException("Unable to
+                                                                // process");
+                                                                return null;
+                                                            }))
+                            .toList();
+
+            return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
+            // If we require results (CompletableFuture<List<String>> )
+            // return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+            // .thenApply(v -> futures.stream().map(CompletableFuture::join).toList());
+
+            // Manual thread creation in a loop (Anti-pattern!)
+            // for (String data : rawData) {
+            // new Thread(() -> {
+            // try {
+            // String processed = heavyTransformation(data);
+
+            // dataList.add(processed);
+
+            // // Direct printing/logging
+            // System.out.println("Processed: " + processed);
+            // } catch (Exception e) {
+            // e.printStackTrace();
+            // }
+            // }).start();
         }
 
-        List<CompletableFuture<Void>> futures = snapshot.stream()
-                .map(data -> CompletableFuture.runAsync(
-                        () -> {
-                            String processed = heavyTransformation(data);
-                            dataList.add(processed);
-                        }, executor).exceptionally(ex -> {
-                            // throw new RuntimeException("Unable to process");
-                            return null;
-                        }))
-                .toList();
-
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
-        // If we require results (CompletableFuture<List<String>> )
-        // return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-        // .thenApply(v -> futures.stream().map(CompletableFuture::join).toList());
-
-        // Manual thread creation in a loop (Anti-pattern!)
-        // for (String data : rawData) {
-        // new Thread(() -> {
-        // try {
-        // String processed = heavyTransformation(data);
-
-        // dataList.add(processed);
-
-        // // Direct printing/logging
-        // System.out.println("Processed: " + processed);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }).start();
-    }
-
-    private String heavyTransformation(String input) {
-        // Simulates heavy API call or DB calculation
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
+        private String heavyTransformation(String input) {
+            // Simulates heavy API call or DB calculation
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+            return input.toUpperCase();
         }
-        return input.toUpperCase();
-    }
 
-    public void shutdown() {
-        executor.shutdown();
-    }
+        public void shutdown() {
+            executor.shutdown();
+        }
 
-    public List<String> getDataList() {
-        return dataList;
+        public List<String> getDataList() {
+            return dataList;
+        }
     }
-}
-
 }

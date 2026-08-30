@@ -2,13 +2,12 @@ package com.example.concepts.concurrency;
 
 /**
  * CONCEPT TAUGHT: Racing Async Tasks with anyOf
- * 
- * WHY THIS WAS WRITTEN:
- * - A challenge to trigger parallel requests and consume the first successful result.
- * 
- * KEY LESSONS:
- * - CompletableFuture.anyOf() returns when the first future completes.
- * - Handle errors carefully when using anyOf to prevent failures from masking successes.
+ *
+ * <p>WHY THIS WAS WRITTEN: - A challenge to trigger parallel requests and consume the first
+ * successful result.
+ *
+ * <p>KEY LESSONS: - CompletableFuture.anyOf() returns when the first future completes. - Handle
+ * errors carefully when using anyOf to prevent failures from masking successes.
  */
 import java.util.*;
 import java.util.concurrent.*;
@@ -17,53 +16,60 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RacingFuturesChallenge {
 
     // Dummy helper simulating latency and success/failure
-    public static CompletableFuture<String> callService(String name, long delayMs, boolean shouldFail) {
-        return CompletableFuture.supplyAsync(() -> {
-            sleep(delayMs);
-            if (shouldFail) {
-                throw new RuntimeException("Service " + name + " encountered an error");
-            }
-            return "Result from " + name;
-        });
+    public static CompletableFuture<String> callService(
+            String name, long delayMs, boolean shouldFail) {
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    sleep(delayMs);
+                    if (shouldFail) {
+                        throw new RuntimeException("Service " + name + " encountered an error");
+                    }
+                    return "Result from " + name;
+                });
     }
 
     /**
      * Implement this method to:
-     * 
-     * Return a CompletableFuture that completes with the value of the FIRST future in the list
+     *
+     * <p>Return a CompletableFuture that completes with the value of the FIRST future in the list
      * to complete successfully.
-     * 
-     * Requirements:
-     * 1. If any future completes successfully, the returned future should immediately complete with that result.
-     * 2. If a future fails, it should be ignored unless ALL futures in the list fail.
-     * 3. If ALL futures in the list fail (complete exceptionally), then the returned future should
-     *    complete exceptionally with a RuntimeException("All services failed").
-     * 4. The implementation must be non-blocking (do not call `.get()` or `.join()` inside this method).
-     * 5. If the input list is null or empty, return a failed future with an IllegalArgumentException.
-     * 
-     * Note: Do NOT use CompletableFuture.anyOf() directly, as anyOf completes exceptionally if the 
-     * first completing future fails, whereas we want to wait for the first SUCCESSFUL future.
+     *
+     * <p>Requirements: 1. If any future completes successfully, the returned future should
+     * immediately complete with that result. 2. If a future fails, it should be ignored unless ALL
+     * futures in the list fail. 3. If ALL futures in the list fail (complete exceptionally), then
+     * the returned future should complete exceptionally with a RuntimeException("All services
+     * failed"). 4. The implementation must be non-blocking (do not call `.get()` or `.join()`
+     * inside this method). 5. If the input list is null or empty, return a failed future with an
+     * IllegalArgumentException.
+     *
+     * <p>Note: Do NOT use CompletableFuture.anyOf() directly, as anyOf completes exceptionally if
+     * the first completing future fails, whereas we want to wait for the first SUCCESSFUL future.
      */
     public static <T> CompletableFuture<T> firstSuccessful(List<CompletableFuture<T>> futures) {
         // TODO: Implement this racing/hedging pattern
 
-        if(futures == null || futures.isEmpty()) {
-            return CompletableFuture.failedFuture(new IllegalArgumentException("futures is null or empty"));
+        if (futures == null || futures.isEmpty()) {
+            return CompletableFuture.failedFuture(
+                    new IllegalArgumentException("futures is null or empty"));
         }
         AtomicInteger count = new AtomicInteger(0);
         CompletableFuture<T> ans = new CompletableFuture<>();
         futures.stream()
-        .forEach(f -> {
-            f.whenComplete((res, ex) -> {
-                if(ex != null) {
-                    if(count.incrementAndGet() == futures.size()) {
-                        ans.completeExceptionally(new RuntimeException("All services failed"));
-                    }
-                } else {
-                    ans.complete(res);
-                }
-            });
-        });
+                .forEach(
+                        f -> {
+                            f.whenComplete(
+                                    (res, ex) -> {
+                                        if (ex != null) {
+                                            if (count.incrementAndGet() == futures.size()) {
+                                                ans.completeExceptionally(
+                                                        new RuntimeException(
+                                                                "All services failed"));
+                                            }
+                                        } else {
+                                            ans.complete(res);
+                                        }
+                                    });
+                        });
 
         return ans;
     }
@@ -125,9 +131,9 @@ public class RacingFuturesChallenge {
             if (e.getCause().getMessage().contains("All services failed")) {
                 System.out.println("SUCCESS");
             } else {
-                System.err.println("FAILURE: Unexpected exception message: " + e.getCause().getMessage());
+                System.err.println(
+                        "FAILURE: Unexpected exception message: " + e.getCause().getMessage());
             }
         }
     }
-
 }

@@ -2,20 +2,18 @@ package com.example.concepts.concurrency;
 
 /**
  * CONCEPT TAUGHT: Explicit ReentrantLock and Condition Coordination
- * 
- * WHY THIS WAS WRITTEN:
- * - Implements a thread-safe bounded queue with producers and consumers coordinated by Condition variables.
- * 
- * KEY LESSONS:
- * - Always call lock.lock() outside the try block.
- * - Check conditions in a while-loop (not an if) to handle spurious wakeups.
- * - Propagate InterruptedException to callers in blocking methods.
- * - Use signal() instead of signalAll() to optimize context switching.
+ *
+ * <p>WHY THIS WAS WRITTEN: - Implements a thread-safe bounded queue with producers and consumers
+ * coordinated by Condition variables.
+ *
+ * <p>KEY LESSONS: - Always call lock.lock() outside the try block. - Check conditions in a
+ * while-loop (not an if) to handle spurious wakeups. - Propagate InterruptedException to callers in
+ * blocking methods. - Use signal() instead of signalAll() to optimize context switching.
  */
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BoundedQueue<T> {
 
@@ -61,5 +59,4 @@ public class BoundedQueue<T> {
             lock.unlock();
         }
     }
-
 }
