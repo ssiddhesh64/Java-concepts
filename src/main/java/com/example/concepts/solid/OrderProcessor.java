@@ -85,14 +85,13 @@ public class OrderProcessor {
     static final class PricingRules {
 
         private PricingRules() {}
-        ;
 
         public static final double FLAT_DISCOUNT_THRESHOLD = 100.0;
         public static final double FLAT_DISCOUNT_AMOUNT = 10.0;
     }
 
     // Nested helper class to prevent namespace conflicts
-    static interface OrderRepository {
+    interface OrderRepository {
         void save(Order order);
     }
 
