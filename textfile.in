@@ -1,0 +1,15 @@
+Tic Tac Toe Game Input
+Player 1: X
+Player 2: O
+Board Size: 3
+1 2
+0 1
+2 2
+1 0
+0 0
+2 1
+1 1
+0 2
+2 0
+Game Over
+Winner: X
