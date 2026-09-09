@@ -1,15 +1,20 @@
-Tic Tac Toe Game Input
-Player 1: X
-Player 2: O
-Board Size: 3
+Java Input Output Examples
+==========================
+
+This file is used to demonstrate FileReader.
+
+Java supports multiple I/O abstractions.
+
+BufferedReader reads text efficiently.
+FileReader reads characters from a file.
+InputStream works at the byte level.
+
+Numbers:
+10 20 30 40 50
+
+Tic Tac Toe:
 1 2
 0 1
 2 2
-1 0
-0 0
-2 1
-1 1
-0 2
-2 0
-Game Over
-Winner: X
+
+End of file.
